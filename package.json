@@ -2,7 +2,20 @@
   "name": "challenge-avalith",
   "version": "1.0.0",
   "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "start-dev": "nodemon app.js",
+    "test": "mocha ./test --recursive"
+  },
   "repository": "https://github.com/urtubeycarlos/challenge-avalith.git",
   "author": "Carlos Urtubey",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "eslint": "^7.26.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.23.2",
+    "mocha": "^8.4.0",
+    "nodemon": "^2.0.7"
+  }
 }
