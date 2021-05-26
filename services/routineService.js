@@ -1,4 +1,5 @@
 const mongoDB = require('../mongo.db');
+const { checkID } = require('../utils/checkers');
 
 async function getAll() {
     const [db, client] = await mongoDB;
@@ -14,11 +15,7 @@ async function getAll() {
 }
 
 async function get(clientId) {
-    if (!clientId) {
-        const error = new Error('clientId must be defined');
-        error.code = 'ER_NOT_ID';
-        throw error;
-    }
+    checkID(clientId);
     const [db, client] = await mongoDB;
     return new Promise((resolve, reject) => {
         db.collection('routines').findOne({ client_id: clientId }, (error, result) => {
@@ -32,11 +29,7 @@ async function get(clientId) {
 }
 
 async function insert(routine) {
-    if (!routine.client_id) {
-        const error = new Error('client_id must be defined inside routine');
-        error.code = 'ER_NOT_ID';
-        throw error;
-    }
+    checkID(routine.client_id);
     const [db, client] = await mongoDB;
     return new Promise((resolve, reject) => {
         db.collection('routines').insert(routine, (error, result) => {
@@ -50,11 +43,7 @@ async function insert(routine) {
 }
 
 async function update(routine) {
-    if (!routine.client_id) {
-        const error = new Error('client_id must be defined inside routine');
-        error.code = 'ER_NOT_ID';
-        throw error;
-    }
+    checkID(routine.client_id);
     const [db, client] = await mongoDB;
     return new Promise((resolve, reject) => {
         const query = { client_id: routine.client_id };
@@ -69,11 +58,7 @@ async function update(routine) {
 }
 
 async function remove(clientId) {
-    if (!clientId) {
-        const error = new Error('clientId must be defined');
-        error.code = 'ER_NOT_ID';
-        throw error;
-    }
+    checkID(clientId);
     const [db, client] = await mongoDB;
     return new Promise((resolve, reject) => {
         const query = { client_id: clientId };
