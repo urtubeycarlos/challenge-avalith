@@ -16,7 +16,7 @@ async function getAll() {
 async function get(clientId) {
     if (!clientId) {
         const error = new Error('clientId must be defined');
-        error.code = 'ERR_NOT_ID';
+        error.code = 'ER_NOT_ID';
         throw error;
     }
     const [db, client] = await mongoDB;
@@ -34,7 +34,7 @@ async function get(clientId) {
 async function insert(routine) {
     if (!routine.client_id) {
         const error = new Error('client_id must be defined inside routine');
-        error.code = 'ERR_NOT_ID';
+        error.code = 'ER_NOT_ID';
         throw error;
     }
     const [db, client] = await mongoDB;
@@ -52,7 +52,7 @@ async function insert(routine) {
 async function update(routine) {
     if (!routine.client_id) {
         const error = new Error('client_id must be defined inside routine');
-        error.code = 'ERR_NOT_ID';
+        error.code = 'ER_NOT_ID';
         throw error;
     }
     const [db, client] = await mongoDB;
@@ -71,7 +71,7 @@ async function update(routine) {
 async function remove(clientId) {
     if (!clientId) {
         const error = new Error('clientId must be defined');
-        error.code = 'ERR_NOT_ID';
+        error.code = 'ER_NOT_ID';
         throw error;
     }
     const [db, client] = await mongoDB;
