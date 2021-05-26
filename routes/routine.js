@@ -17,6 +17,9 @@ router.get('/:id', async (req, res) => {
         const result = await routineService.get(req.params.id);
         return res.status(200).send(result);
     } catch (error) {
+        if (error.code === 'ER_NOT_ID') {
+            return res.sendStatus(400);
+        }
         return res.sendStatus(500);
     }
 });
@@ -26,6 +29,9 @@ router.post('/', async (req, res) => {
         const result = await routineService.insert(req.body);
         return res.status(200).send(result);
     } catch (error) {
+        if (error.code === 'ER_NOT_ID') {
+            return res.sendStatus(400);
+        }
         return res.sendStatus(500);
     }
 });
@@ -36,6 +42,9 @@ router.put('/:id', async (req, res) => {
         const result = await routineService.update(req.body);
         return res.status(200).send(result);
     } catch (error) {
+        if (error.code === 'ER_NOT_ID') {
+            return res.sendStatus(400);
+        }
         return res.sendStatus(500);
     }
 });
@@ -45,6 +54,9 @@ router.delete('/:id', async (req, res) => {
         const result = await routineService.remove(req.params.id);
         return res.status(200).send(result);
     } catch (error) {
+        if (error.code === 'ER_NOT_ID') {
+            return res.sendStatus(400);
+        }
         return res.sendStatus(500);
     }
 });
