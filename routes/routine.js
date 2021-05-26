@@ -18,7 +18,7 @@ router.get('/:id', async (req, res) => {
         return res.status(200).send(result);
     } catch (error) {
         if (error.code === 'ER_NOT_ID') {
-            return res.sendStatus(400);
+            return res.status(400).send({ msg: 'Id must be provided' });
         }
         return res.sendStatus(500);
     }
@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
         return res.status(200).send(result);
     } catch (error) {
         if (error.code === 'ER_NOT_ID') {
-            return res.sendStatus(400);
+            return res.status(400).send({ msg: 'Id must be provided' });
         }
         return res.sendStatus(500);
     }
@@ -43,7 +43,7 @@ router.put('/:id', async (req, res) => {
         return res.status(200).send(result);
     } catch (error) {
         if (error.code === 'ER_NOT_ID') {
-            return res.sendStatus(400);
+            return res.status(400).send({ msg: 'Id must be provided' });
         }
         return res.sendStatus(500);
     }
@@ -55,7 +55,7 @@ router.delete('/:id', async (req, res) => {
         return res.status(200).send(result);
     } catch (error) {
         if (error.code === 'ER_NOT_ID') {
-            return res.sendStatus(400);
+            return res.status(400).send({ msg: 'Id must be provided' });
         }
         return res.sendStatus(500);
     }
