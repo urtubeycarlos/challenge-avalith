@@ -11,5 +11,8 @@
         "ecmaVersion": 12
     },
     "rules": {
+        "linebreak-style": "off",
+        "indent": ["error", 4],
+        "object-curly-newline": "off"
     }
 }
