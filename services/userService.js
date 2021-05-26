@@ -20,7 +20,7 @@ function get({ email, password }) {
     checkParams(email, password);
     return new Promise((resolve, reject) => {
         const query = 'select id, name, surname, email, password, role from user where email = ? and password = ? and active <> 0';
-        const values = [email, password];
+        const values = [email, md5(password)];
         mySQLDB.query(query, values, (error, result) => {
             if (error) {
                 return reject(error);
@@ -70,7 +70,7 @@ function remove({ email, password }) {
     checkParams(email, password);
     return new Promise((resolve, reject) => {
         const query = 'update user set active = 0 where email = ? and password = ?';
-        const values = [email, password];
+        const values = [email, md5(password)];
         mySQLDB.query(query, values, (error, result) => {
             if (error) {
                 return reject(error);
