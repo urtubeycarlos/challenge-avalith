@@ -23,7 +23,7 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const result = await routineService.insert(req.routine);
+        const result = await routineService.insert(req.body);
         return res.status(200).send(result);
     } catch (error) {
         return res.sendStatus(500);
