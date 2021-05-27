@@ -8,6 +8,7 @@ function getAll() {
     return new Promise((resolve, reject) => {
         const query = 'select id, name, surname, email, password, role from user where active <> 0';
         mySQLDB.query(query, (error, result) => {
+            mySQLDB.end();
             if (error) {
                 return reject(error);
             }
@@ -22,6 +23,7 @@ function get({ email, password }) {
         const query = 'select id, name, surname, email, password, role from user where email = ? and password = ? and active <> 0';
         const values = [email, md5(password)];
         mySQLDB.query(query, values, (error, result) => {
+            mySQLDB.end();
             if (error) {
                 return reject(error);
             }
@@ -41,6 +43,7 @@ function update({ email, password, newPassword }) {
         const query = 'update user set password = ? where email = ? and password = ?';
         const values = [md5(newPassword), email, md5(password)];
         mySQLDB.query(query, values, (error, result) => {
+            mySQLDB.end();
             if (error) {
                 return reject(error);
             }
@@ -55,6 +58,7 @@ function insert({ name, surname, email, password, role }) {
         const query = 'insert into user (name, surname, email, password, role) values (?, ?, ?, ?, ?)';
         const values = [name, surname, email, md5(password), role];
         mySQLDB.query(query, values, (error, result) => {
+            mySQLDB.end();
             if (error) {
                 if (error.code === 'ER_DUP_ENTRY') {
                     return resolve(update({ email, password, newPassword: password }));
@@ -72,6 +76,7 @@ function remove({ email, password }) {
         const query = 'update user set active = 0 where email = ? and password = ?';
         const values = [email, md5(password)];
         mySQLDB.query(query, values, (error, result) => {
+            mySQLDB.end();
             if (error) {
                 return reject(error);
             }

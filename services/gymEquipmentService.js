@@ -10,6 +10,7 @@ function getAll() {
             }
             return resolve(result);
         });
+        mySQLDB.end();
     });
 }
 
@@ -23,6 +24,7 @@ function get(id) {
             }
             return resolve(result);
         });
+        mySQLDB.end();
     });
 }
 
@@ -37,6 +39,7 @@ function insert({ name, brand, type, model }) {
             }
             return resolve(result);
         });
+        mySQLDB.end();
     });
 }
 
@@ -47,11 +50,13 @@ function update(id, status) {
         const query = 'update equipment set status = ? where id = ?';
         const values = [status, id];
         mySQLDB.query(query, values, (error, result) => {
+            mySQLDB.end();
             if (error) {
                 return reject(error);
             }
             return resolve(result);
         });
+        mySQLDB.end();
     });
 }
 
@@ -60,11 +65,13 @@ function remove(id) {
     return new Promise((resolve, reject) => {
         const query = 'delete from equipment where id = ?';
         mySQLDB.query(query, id, (error, result) => {
+            mySQLDB.end();
             if (error) {
                 return reject(error);
             }
             return resolve(result);
         });
+        mySQLDB.end();
     });
 }
 
