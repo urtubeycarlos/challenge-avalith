@@ -47,6 +47,9 @@ router.put('/:id', async (req, res) => {
         if (error.code === 'ER_NOT_PARAM') {
             return res.sendStatus(400);
         }
+        if (error.code === 'ER_BAD_STATUS') {
+            return res.sendStatus(400);
+        }
         return res.sendStatus(500);
     }
 });

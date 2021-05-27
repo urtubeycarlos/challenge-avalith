@@ -46,6 +46,11 @@ function insert({ name, brand, type, model }) {
 function update(id, status) {
     checkID(id);
     checkParams(status);
+    if (status !== 1 || status !== 2) {
+        const error = new Error();
+        error.code = 'ER_BAD_STATUS';
+        throw error;
+    }
     return new Promise((resolve, reject) => {
         const query = 'update equipment set status = ? where id = ?';
         const values = [status, id];
