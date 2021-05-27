@@ -5,12 +5,12 @@ function getAll() {
     return new Promise((resolve, reject) => {
         const query = 'select id, name, brand, type, model, status from equipment';
         mySQLDB.query(query, (error, result) => {
+            mySQLDB.end();
             if (error) {
                 return reject(error);
             }
             return resolve(result);
         });
-        mySQLDB.end();
     });
 }
 
@@ -19,12 +19,12 @@ function get(id) {
     return new Promise((resolve, reject) => {
         const query = 'select id, name, brand, type, model, status from equipment where id = ?';
         mySQLDB.query(query, id, (error, result) => {
+            mySQLDB.end();
             if (error) {
                 return reject(error);
             }
             return resolve((result[0] === undefined) ? {} : result[0]);
         });
-        mySQLDB.end();
     });
 }
 
@@ -34,12 +34,12 @@ function insert({ name, brand, type, model }) {
         const query = 'insert into equipment (name, brand, type, model) values (?, ?, ?, ?)';
         const values = [name, brand, type, model];
         mySQLDB.query(query, values, (error, result) => {
+            mySQLDB.end();
             if (error) {
                 return reject(error);
             }
             return resolve(result);
         });
-        mySQLDB.end();
     });
 }
 
@@ -56,7 +56,6 @@ function update(id, status) {
             }
             return resolve(result);
         });
-        mySQLDB.end();
     });
 }
 
@@ -71,7 +70,6 @@ function remove(id) {
             }
             return resolve(result);
         });
-        mySQLDB.end();
     });
 }
 
