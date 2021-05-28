@@ -5,12 +5,13 @@ async function getAll() {
     const [db, client] = await mongoDB;
     return new Promise((resolve, reject) => {
         db.collection('routines').find({}).toArray((error, result) => {
+            client.close();
             if (error) {
+                console.log(error);
                 return reject(error);
             }
             return resolve(result);
         });
-        client.close();
     });
 }
 
@@ -19,12 +20,12 @@ async function get(clientId) {
     const [db, client] = await mongoDB;
     return new Promise((resolve, reject) => {
         db.collection('routines').findOne({ client_id: clientId }, (error, result) => {
+            client.close();
             if (error) {
                 return reject(error);
             }
             return resolve(result);
         });
-        client.close();
     });
 }
 
@@ -33,12 +34,12 @@ async function insert(routine) {
     const [db, client] = await mongoDB;
     return new Promise((resolve, reject) => {
         db.collection('routines').insert(routine, (error, result) => {
+            client.close();
             if (error) {
                 return reject(error);
             }
             return resolve(result);
         });
-        client.close();
     });
 }
 
@@ -48,12 +49,12 @@ async function update(routine) {
     return new Promise((resolve, reject) => {
         const query = { client_id: routine.client_id };
         db.collection('routines').updateOne(query, routine, (error, result) => {
+            client.close();
             if (error) {
                 return reject(error);
             }
             return resolve(result);
         });
-        client.close();
     });
 }
 
@@ -63,12 +64,12 @@ async function remove(clientId) {
     return new Promise((resolve, reject) => {
         const query = { client_id: clientId };
         db.collection('routines').deleteOne(query, (error, result) => {
+            client.close();
             if (error) {
                 return reject(error);
             }
             return resolve(result);
         });
-        client.close();
     });
 }
 
