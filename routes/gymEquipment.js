@@ -26,11 +26,11 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const result = await gymEquipmentService.insert(req.body);
-        return res.status(200).send(result);
+        await gymEquipmentService.insert(req.body);
+        return res.status(200).send({ inserted: true, msg: 'equipment added successfully' });
     } catch (error) {
         if (error.code === 'ER_NOT_PARAM') {
-            return res.sendStatus(400);
+            return res.status(400).send({ inserted: false, msg: 'missing params' });
         }
         if (error.code === 'ER_DUP_ENTRY') {
             return res.status(400).send({ msg: 'name must be unique' });
