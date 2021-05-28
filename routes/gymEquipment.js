@@ -41,14 +41,14 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        const result = await gymEquipmentService.update(req.body);
-        return res.status(200).send(result);
+        await gymEquipmentService.update(req.params.id, req.body.status);
+        return res.status(200).send({ updated: true, msg: 'status updated succesfully' });
     } catch (error) {
         if (error.code === 'ER_NOT_PARAM') {
-            return res.sendStatus(400);
+            return res.status(400).send({ updated: false, msg: 'field status not exists' });
         }
         if (error.code === 'ER_BAD_STATUS') {
-            return res.sendStatus(400);
+            return res.status(400).send({ updated: false, msg: 'status must be 1 for "working" or 2 for "out of service"' });
         }
         return res.sendStatus(500);
     }
