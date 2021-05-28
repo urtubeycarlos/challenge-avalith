@@ -9,14 +9,16 @@ const {
 
 const connectionURL = `mongodb://${MONGO_HOST}:${MONGO_PORT}`;
 
-const connection = new Promise((resolve, reject) => {
-    MongoClient.connect(connectionURL, { useUnifiedTopology: true }, (error, client) => {
-        if (error) {
-            return reject(error);
-        }
-        const db = client.db(MONGO_DB);
-        return resolve([db, client]);
+function connection() {
+    return new Promise((resolve, reject) => {
+        MongoClient.connect(connectionURL, { useUnifiedTopology: true }, (error, client) => {
+            if (error) {
+                return reject(error);
+            }
+            const db = client.db(MONGO_DB);
+            return resolve([db, client]);
+        });
     });
-});
+}
 
 module.exports = connection;
