@@ -15,9 +15,9 @@ function checkToken(req, res, next) {
     return res.sendStatus(401);
 }
 
-function checkRole(roleRequired) {
+function checkRole(...rolesRequired) {
     return (req, res, next) => {
-        const isValid = req.token.role === roleRequired;
+        const isValid = rolesRequired.includes(req.token.role);
         if (isValid) {
             return next();
         }
