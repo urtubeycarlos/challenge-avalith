@@ -57,7 +57,10 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try {
         const result = await gymEquipmentService.remove(req.params.id);
-        return res.status(200).result(result);
+        if (result.affectedRows === 0) {
+            return res.status(400).send({ deleted: false, msg: 'equipment not exists' });
+        }
+        return res.status(200).send({ deleted: true, msg: 'equipment deleted successfully' });
     } catch (error) {
         return res.sendStatus(500);
     }
