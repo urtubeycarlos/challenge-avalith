@@ -15,6 +15,8 @@ const config = {
     database: MYSQL_DB,
 };
 
-const connection = mySQL.createPool(config);
+function connection() {
+    return mySQL.createPool(config);
+}
 
 module.exports = connection;
