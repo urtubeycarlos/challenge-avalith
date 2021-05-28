@@ -18,7 +18,7 @@ async function get(clientId) {
     checkID(clientId);
     const [db, client] = await mongoDB();
     return new Promise((resolve, reject) => {
-        db.collection('routines').findOne({ client_id: clientId }, (error, result) => {
+        db.collection('routines').findOne({ client_id: Number.parseInt(clientId, 10) }, (error, result) => {
             client.close();
             if (error) {
                 return reject(error);
@@ -30,9 +30,15 @@ async function get(clientId) {
 
 async function insert(routine) {
     checkID(routine.client_id);
+    const existent = await get(routine.client_id);
+    if (existent) {
+        const error = new Error('client_id must be unique in db');
+        error.code = 'ER_DUP_ENTRY';
+        throw error;
+    }
     const [db, client] = await mongoDB();
     return new Promise((resolve, reject) => {
-        db.collection('routines').insert(routine, (error, result) => {
+        db.collection('routines').insertOne(routine, (error, result) => {
             client.close();
             if (error) {
                 return reject(error);
@@ -47,7 +53,7 @@ async function update(routine) {
     const [db, client] = await mongoDB();
     return new Promise((resolve, reject) => {
         const query = { client_id: routine.client_id };
-        db.collection('routines').updateOne(query, routine, (error, result) => {
+        db.collection('routines').updateOne(query, { $set: routine }, (error, result) => {
             client.close();
             if (error) {
                 return reject(error);
@@ -61,7 +67,7 @@ async function remove(clientId) {
     checkID(clientId);
     const [db, client] = await mongoDB();
     return new Promise((resolve, reject) => {
-        const query = { client_id: clientId };
+        const query = { client_id: Number.parseInt(clientId, 10) };
         db.collection('routines').deleteOne(query, (error, result) => {
             client.close();
             if (error) {
