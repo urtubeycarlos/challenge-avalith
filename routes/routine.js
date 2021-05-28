@@ -26,24 +26,26 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const result = await routineService.insert(req.body);
-        return res.status(200).send(result);
+        await routineService.insert(req.body);
+        return res.status(200).send({ inserted: true, msg: 'routine added successfully' });
     } catch (error) {
         if (error.code === 'ER_NOT_ID') {
-            return res.status(400).send({ msg: 'Id must be provided' });
+            return res.status(400).send({ inserted: false, msg: 'Id must be provided' });
+        }
+        if (error.code === 'ER_DUP_ENTRY') {
+            return res.status(400).send({ inserted: false, msg: 'duplicated routine for client_id entry' });
         }
         return res.sendStatus(500);
     }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/', async (req, res) => {
     try {
-        req.body.client_id = req.params.id;
-        const result = await routineService.update(req.body);
-        return res.status(200).send(result);
+        await routineService.update(req.body);
+        return res.status(200).send({ updated: true, msg: 'routine updated successfully' });
     } catch (error) {
         if (error.code === 'ER_NOT_ID') {
-            return res.status(400).send({ msg: 'Id must be provided' });
+            return res.status(400).send({ updated: false, msg: 'Id must be provided' });
         }
         return res.sendStatus(500);
     }
@@ -52,10 +54,13 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try {
         const result = await routineService.remove(req.params.id);
-        return res.status(200).send(result);
+        if (result.result.n === 0) {
+            return res.status(400).send({ deleted: false, msg: 'routine not exists for passed id' });
+        }
+        return res.status(200).send({ deleted: true, msg: 'routine deleted successfully' });
     } catch (error) {
         if (error.code === 'ER_NOT_ID') {
-            return res.status(400).send({ msg: 'Id must be provided' });
+            return res.status(400).send({ deleted: false, msg: 'Id must be provided' });
         }
         return res.sendStatus(500);
     }
