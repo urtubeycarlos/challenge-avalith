@@ -30,7 +30,10 @@ router.post('/signup', async (req, res) => {
         return res.status(200).send({ signup: true, msg: 'user added successfully' });
     } catch (error) {
         if (error.code === 'ER_NOT_PARAM') {
-            return res.sendStatus(400);
+            return res.status(400).send({ signup: false, msg: 'missing params' });
+        }
+        if (error.code === 'ER_BAD_ROLE') {
+            return res.status(400).send({ signup: false, msg: 'bad role' });
         }
         return res.sendStatus(500);
     }

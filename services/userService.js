@@ -57,6 +57,11 @@ function update({ email, password, newPassword }) {
 
 function insert({ name, surname, email, password, role }) {
     checkParams(name, surname, email, password, role);
+    if (role < 1 || role > 3) {
+        const error = new Error('Bad role');
+        error.code = 'ER_BAD_ROLE';
+        throw error;
+    }
     return new Promise((resolve, reject) => {
         const query = 'insert into user (name, surname, email, password, role) values (?, ?, ?, ?, ?)';
         const values = [name, surname, email, md5(password), role];
