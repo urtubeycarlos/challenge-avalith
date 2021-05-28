@@ -55,9 +55,9 @@ router.delete('/delete', async (req, res) => {
     try {
         const result = await userService.remove(req.body);
         if (result.affectedRows === 0) {
-            return res.status(400).send({ signdown: false, msg: 'invalid email or password' });
+            return res.status(400).send({ deleted: false, msg: 'invalid email or password' });
         }
-        return res.status(200).send({ status: 200, signdown: false, msg: 'user eliminated succesfully' });
+        return res.status(200).send({ deleted: false, msg: 'user eliminated succesfully' });
     } catch (error) {
         if (error.code === 'ER_NOT_PARAM') {
             return res.sendStatus(400);
