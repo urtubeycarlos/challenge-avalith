@@ -1,9 +1,10 @@
 const express = require('express');
 const gymEquipmentService = require('../services/gymEquipmentService');
+const { checkRole } = require('../middlewares/authentication');
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', checkRole('admin', 'professor'), async (req, res) => {
     try {
         const result = await gymEquipmentService.getAll();
         return res.status(200).send(result);
@@ -12,7 +13,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', checkRole('admin', 'professor'), async (req, res) => {
     try {
         const result = await gymEquipmentService.get(req.params.id);
         return res.status(200).send(result);
@@ -24,7 +25,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', checkRole('admin'), async (req, res) => {
     try {
         await gymEquipmentService.insert(req.body);
         return res.status(200).send({ inserted: true, msg: 'equipment added successfully' });
@@ -39,7 +40,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', checkRole('admin', 'professor'), async (req, res) => {
     try {
         await gymEquipmentService.update(req.params.id, req.body.status);
         return res.status(200).send({ updated: true, msg: 'status updated succesfully' });
@@ -54,7 +55,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', checkRole('admin'), async (req, res) => {
     try {
         const result = await gymEquipmentService.remove(req.params.id);
         if (result.affectedRows === 0) {
