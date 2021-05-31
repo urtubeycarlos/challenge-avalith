@@ -34,7 +34,7 @@ function get({ email, password }) {
     });
 }
 
-function update({ email, password, newPassword }) {
+function update({ email, password, newPassword, role }) {
     checkParams(email, password, newPassword);
     if (newPassword === '') {
         const error = new Error('new password cant be blank');
@@ -42,7 +42,8 @@ function update({ email, password, newPassword }) {
         throw error;
     }
     return new Promise((resolve, reject) => {
-        const query = 'update user set password = ? where email = ? and password = ?';
+        const newRole = (role) ? `, role = ${role}` : '';
+        const query = `update user set password = ?, active = 1${newRole} where email = ? and password = ?`;
         const values = [md5(newPassword), email, md5(password)];
         const db = mySQLDB();
         db.query(query, values, (error, result) => {
@@ -57,11 +58,6 @@ function update({ email, password, newPassword }) {
 
 function insert({ name, surname, email, password, role }) {
     checkParams(name, surname, email, password, role);
-    if (role < 1 || role > 3) {
-        const error = new Error('Bad role');
-        error.code = 'ER_BAD_ROLE';
-        throw error;
-    }
     return new Promise((resolve, reject) => {
         const query = 'insert into user (name, surname, email, password, role) values (?, ?, ?, ?, ?)';
         const values = [name, surname, email, md5(password), role];

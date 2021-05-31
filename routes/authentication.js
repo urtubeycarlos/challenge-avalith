@@ -25,6 +25,12 @@ router.post('/login', async (req, res) => {
 });
 
 router.post('/signup', async (req, res) => {
+    if (!req.body.role) {
+        return res.status(400).send({ signup: false, msg: 'missing params' });
+    }
+    if (req.body.role < 1 || req.body.role > 2) {
+        return res.status(400).send({ signup: false, msg: 'bad role' });
+    }
     try {
         await userService.insert(req.body);
         return res.status(200).send({ signup: true, msg: 'user added successfully' });
@@ -32,8 +38,23 @@ router.post('/signup', async (req, res) => {
         if (error.code === 'ER_NOT_PARAM') {
             return res.status(400).send({ signup: false, msg: 'missing params' });
         }
-        if (error.code === 'ER_BAD_ROLE') {
-            return res.status(400).send({ signup: false, msg: 'bad role' });
+        return res.sendStatus(500);
+    }
+});
+
+router.post('/signup_admin', async (req, res) => {
+    if (!req.body.role) {
+        return res.status(400).send({ signup: false, msg: 'missing params' });
+    }
+    if (req.body.role < 1 || req.body.role > 3) {
+        return res.status(400).send({ signup: false, msg: 'bad role' });
+    }
+    try {
+        await userService.insert(req.body);
+        return res.status(200).send({ signup: true, msg: 'user added successfully' });
+    } catch (error) {
+        if (error.code === 'ER_NOT_PARAM') {
+            return res.status(400).send({ signup: false, msg: 'missing params' });
         }
         return res.sendStatus(500);
     }
