@@ -21,7 +21,7 @@ function checkRole(...rolesRequired) {
         if (isValid) {
             return next();
         }
-        return res.sendStatus(403);
+        return res.sendStatus(401);
     };
 }
 
