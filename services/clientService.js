@@ -2,13 +2,11 @@ const mySQLDB = require('../mysql.db');
 const { checkParams, checkID } = require('../utils/checkers');
 const { checkValidDateTime, formatDateTimeToMySQL, checkValidDay } = require('../utils/datetime');
 
-function getClient(clientId) {
-    checkID(clientId);
+function getClients() {
     return new Promise((resolve, reject) => {
-        const query = 'select id, name, surname, email, password, role from user where id = ? and role = "client" and active <> 0';
-        const values = [clientId];
+        const query = 'select id, name, surname, email, password, role from user where role = "client" and active <> 0';
         const db = mySQLDB();
-        db.query(query, values, (error, result) => {
+        db.query(query, (error, result) => {
             db.end();
             if (error) {
                 return reject(error);
@@ -18,11 +16,13 @@ function getClient(clientId) {
     });
 }
 
-function getClients() {
+function getClient(clientId) {
+    checkID(clientId);
     return new Promise((resolve, reject) => {
-        const query = 'select id, name, surname, email, password, role from user where role = "client" and active <> 0';
+        const query = 'select id, name, surname, email, password, role from user where id = ? and role = "client" and active <> 0';
+        const values = [clientId];
         const db = mySQLDB();
-        db.query(query, (error, result) => {
+        db.query(query, values, (error, result) => {
             db.end();
             if (error) {
                 return reject(error);
@@ -82,8 +82,8 @@ function addVisit({ clientId, day, dateTime }) {
 }
 
 module.exports = {
-    getClient,
     getClients,
+    getClient,
     getVisits,
     getClientVisits,
     addVisit,
