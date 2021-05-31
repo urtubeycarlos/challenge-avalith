@@ -2,7 +2,7 @@ const express = require('express');
 const userRouter = require('./routes/authentication');
 const routineRouter = require('./routes/routine');
 const equipmentRouter = require('./routes/gymEquipment');
-const authMiddleware = require('./middlewares/authentication').checkToken;
+const { checkToken } = require('./middlewares/authentication');
 require('dotenv').config();
 
 const app = express();
@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json());
 
 app.use('/user', userRouter);
-app.use(authMiddleware);
+app.use(checkToken);
 app.use('/routine', routineRouter);
 app.use('/equipment', equipmentRouter);
 
