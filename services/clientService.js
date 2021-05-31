@@ -1,7 +1,10 @@
 const mySQLDB = require('../mysql.db');
+const { checkParams, checkID } = require('../utils/checkers');
 const { checkValidDateTime, formatDateTimeToMySQL, checkValidDay } = require('../utils/datetime');
 
 function addVisit({ clientId, day, dateTime }) {
+    checkID(clientId);
+    checkParams(day, dateTime);
     checkValidDay(day);
     checkValidDateTime(dateTime);
     return new Promise((resolve, reject) => {
