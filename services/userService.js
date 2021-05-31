@@ -66,7 +66,7 @@ function insert({ name, surname, email, password, role }) {
             db.end();
             if (error) {
                 if (error.code === 'ER_DUP_ENTRY') {
-                    return resolve(update({ email, password, newPassword: password }));
+                    return resolve(update({ email, password, newPassword: password, role }));
                 }
                 return reject(error);
             }

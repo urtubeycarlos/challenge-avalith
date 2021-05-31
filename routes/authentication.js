@@ -62,6 +62,7 @@ router.post('/signup_admin', checkRole('admin'), async (req, res) => {
 });
 
 router.put('/changepassword', async (req, res) => {
+    delete req.body.role;
     try {
         const result = await userService.update(req.body);
         if (result.affectedRows === 0) {
