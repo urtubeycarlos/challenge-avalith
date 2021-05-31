@@ -29,7 +29,7 @@ async function get(clientId) {
 }
 
 async function insert(routine) {
-    checkID(routine.client_id);
+    checkID(routine.clientId);
     const existent = await get(routine.client_id);
     if (existent) {
         const error = new Error('client_id must be unique in db');
@@ -49,7 +49,7 @@ async function insert(routine) {
 }
 
 async function update(routine) {
-    checkID(routine.client_id);
+    checkID(routine.clientId);
     const [db, client] = await mongoDB();
     return new Promise((resolve, reject) => {
         const query = { client_id: routine.client_id };
