@@ -33,7 +33,7 @@ function get(professorId) {
 
 function getSchedules() {
     return new Promise((resolve, reject) => {
-        const query = 'select professorId, day, startHour, finishHour from professor_schedule';
+        const query = 'select ps.professorId, p.name, p.surname, ps.day, ps.startHour, ps.finishHour from professor_schedule as ps join user as p on ps.professorId = p.id';
         const db = mySQLDB();
         db.query(query, (error, result) => {
             db.end();
@@ -48,7 +48,7 @@ function getSchedules() {
 function getSchedule(professorId) {
     checkID(professorId);
     return new Promise((resolve, reject) => {
-        const query = 'select professorId, day, startHour, finishHour from professor_schedule where professorId = ?';
+        const query = 'select ps.professorId, p.name, p.surname, ps.day, ps.startHour, ps.finishHour from professor_schedule as ps join user as p on ps.professorId = p.id and ps.professorId = ?';
         const values = [professorId];
         const db = mySQLDB();
         db.query(query, values, (error, result) => {
