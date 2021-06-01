@@ -21,7 +21,7 @@ router.get('/:id', checkRole('admin'), async (req, res) => {
         if (error.code === 'ER_NOT_ID') {
             return res.status(400).send({ errorCode: error.code, msg: 'id cant be null' });
         }
-        if (error.code === 'ER_NOT_INT') {
+        if (error.code === 'ER_ID_NOT_INT') {
             return res.status(400).send({ errorCode: error.code, msg: 'id must be an integer' });
         }
         return res.sendStatus(500);
@@ -45,7 +45,7 @@ router.get('/visits/:id', checkRole('professor', 'admin'), async (req, res) => {
         if (error.code === 'ER_NOT_ID') {
             return res.status(400).send({ errorCode: error.code, msg: 'id cant be null' });
         }
-        if (error.code === 'ER_NOT_INT') {
+        if (error.code === 'ER_ID_NOT_INT') {
             return res.status(400).send({ errorCode: error.code, msg: 'id must be an integer' });
         }
         return res.sendStatus(500);
@@ -60,7 +60,7 @@ router.post('/visits', checkRole('professor', 'admin'), async (req, res) => {
         if (error.code === 'ER_NOT_ID') {
             return res.status(400).send({ added: false, errorCode: error.code, msg: 'id cant be null' });
         }
-        if (error.code === 'ER_NOT_INT') {
+        if (error.code === 'ER_ID_NOT_INT') {
             return res.status(400).send({ added: false, errorCode: error.code, msg: 'id must be an integer' });
         }
         if (error.code === 'ER_NOT_PARAM') {
