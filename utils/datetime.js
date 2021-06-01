@@ -22,7 +22,7 @@ function checkValidDateTime(dateTime) {
     const formats = ['DD/MM/YYYY hh:mm:ss', 'DD-MM-YYYY hh:mm:ss'];
     const valid = moment(dateTime, formats, true).isValid();
     if (!valid) {
-        const error = new Error('Invalid date');
+        const error = new Error('Invalid datetime');
         error.code = 'ER_BAD_DATETIME';
         throw error;
     }
