@@ -107,4 +107,5 @@ module.exports = {
     getSchedules,
     getSchedule,
     addSchedule,
+    removeSchedule,
 };
