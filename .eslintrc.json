@@ -14,6 +14,7 @@
         "linebreak-style": "off",
         "no-console": "off",
         "indent": ["error", 4],
-        "object-curly-newline": "off"
+        "object-curly-newline": "off",
+        "no-await-in-loop": "off"
     }
 }
