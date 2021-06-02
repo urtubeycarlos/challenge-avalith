@@ -8,6 +8,8 @@ let MYSQL_USER;
 let MYSQL_PASSWORD;
 let MYSQL_DB;
 
+console.log(env);
+
 if (env) {
     env = env.toUpperCase();
     MYSQL_HOST = process.env[`MYSQL_HOST_${env}`];

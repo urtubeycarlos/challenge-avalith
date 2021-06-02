@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "test": "NODE_ENV=test mocha ./test --recursive"
+    "test": "SET NODE_ENV=test&& mocha ./test --recursive"
   },
   "repository": "https://github.com/urtubeycarlos/challenge-avalith.git",
   "author": "Carlos Urtubey",
