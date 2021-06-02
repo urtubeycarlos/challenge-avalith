@@ -1,11 +1,22 @@
 const { MongoClient } = require('mongodb');
 require('dotenv').config();
 
-const {
-    MONGO_HOST,
-    MONGO_PORT,
-    MONGO_DB,
-} = process.env;
+let env = process.env.NODE_ENV;
+
+let MONGO_HOST;
+let MONGO_PORT;
+let MONGO_DB;
+
+if (env) {
+    env = env.toUpperCase();
+    MONGO_HOST = process.env[`MONGO_HOST_${env}`];
+    MONGO_PORT = process.env[`MONGO_PORT_${env}`];
+    MONGO_DB = process.env[`MONGO_DB_${env}`];
+} else {
+    MONGO_HOST = process.env.MONGO_HOST;
+    MONGO_PORT = process.env.MONGO_PORT;
+    MONGO_DB = process.env.MONGO_DB;
+}
 
 const connectionURL = `mongodb://${MONGO_HOST}:${MONGO_PORT}`;
 
