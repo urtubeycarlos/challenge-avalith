@@ -3,7 +3,7 @@ const { beforeEach, afterEach } = require('mocha');
 const { assert } = require('chai');
 const gymEquipmentService = require('../../services/gymEquipmentService');
 
-describe.only('Testing gym equipment service', () => {
+describe('Testing gym equipment service', () => {
     const equipments = [
         {
             name: 'Bicicleta 1',
