@@ -10,7 +10,7 @@ function checkValidDay(day) {
 
 function checkValidDate(date) {
     const formats = ['DD/MM/YYYY', 'DD-MM-YYYY'];
-    const valid = moment(date, formats, true).isValid();
+    const valid = moment(date, formats).isValid();
     if (!valid) {
         const error = new Error('Invalid date');
         error.code = 'ER_BAD_DATE';
@@ -20,7 +20,7 @@ function checkValidDate(date) {
 
 function checkValidDateTime(dateTime) {
     const formats = ['DD/MM/YYYY hh:mm:ss', 'DD-MM-YYYY hh:mm:ss'];
-    const valid = moment(dateTime, formats, true).isValid();
+    const valid = moment(dateTime, formats).isValid();
     if (!valid) {
         const error = new Error('Invalid datetime');
         error.code = 'ER_BAD_DATETIME';
@@ -30,7 +30,7 @@ function checkValidDateTime(dateTime) {
 
 function checkValidTime(time) {
     const format = 'hh:mm:ss';
-    const valid = moment(time, format, true).isValid();
+    const valid = moment(time, format).isValid();
     if (!valid) {
         const error = new Error('Invalid time');
         error.code = 'ER_BAD_TIME';
