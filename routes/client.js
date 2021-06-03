@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/', checkRole('admin'), async (req, res) => {
     try {
-        const result = await clientService.getClients();
+        const result = await clientService.getAll();
         return res.status(200).send(result);
     } catch (error) {
         return res.sendStatus(500);
@@ -15,7 +15,7 @@ router.get('/', checkRole('admin'), async (req, res) => {
 
 router.get('/:id', checkRole('admin'), async (req, res) => {
     try {
-        const result = await clientService.getClient(req.params.id);
+        const result = await clientService.get(req.params.id);
         return res.status(200).send(result);
     } catch (error) {
         if (error.code === 'ER_NOT_ID') {

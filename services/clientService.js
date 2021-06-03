@@ -2,7 +2,7 @@ const mySQLDB = require('../mysql.db');
 const { checkParams, checkID } = require('../utils/checkers');
 const { checkValidDateTime, formatDateTimeToMySQL, checkValidDay } = require('../utils/datetime');
 
-function getClients() {
+function getAll() {
     return new Promise((resolve, reject) => {
         const query = 'select id, name, surname, email, password, role from user where role = "client" and active <> 0';
         const db = mySQLDB();
@@ -16,7 +16,7 @@ function getClients() {
     });
 }
 
-function getClient(clientId) {
+function get(clientId) {
     checkID(clientId);
     return new Promise((resolve, reject) => {
         const query = 'select id, name, surname, email, password, role from user where id = ? and role = "client" and active <> 0';
@@ -82,8 +82,8 @@ function addVisit({ clientId, day, dateTime }) {
 }
 
 module.exports = {
-    getClients,
-    getClient,
+    getAll,
+    get,
     getVisits,
     getClientVisits,
     addVisit,
