@@ -19,14 +19,15 @@ function getAll() {
 function get(professorId) {
     checkID(professorId);
     return new Promise((resolve, reject) => {
-        const query = 'select id, name, surname, email, password, role from user where id = ? and role = "client" and active <> 0';
+        const query = 'select id, name, surname, email, password, role from user where id = ? and role = "professor" and active <> 0';
+        const values = [professorId];
         const db = mySQLDB();
-        db.query(query, (error, result) => {
+        db.query(query, values, (error, result) => {
             db.end();
             if (error) {
                 return reject(error);
             }
-            return resolve(result);
+            return resolve((result[0] === undefined) ? {} : result[0]);
         });
     });
 }
