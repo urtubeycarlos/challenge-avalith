@@ -4,7 +4,7 @@ const { assert } = require('chai');
 const userService = require('../../services/userService');
 const professorService = require('../../services/professorService');
 
-describe.only('Testing professor service', () => {
+describe('Testing professor service', () => {
     const fakeProfessors = [
         {
             name: 'John',
