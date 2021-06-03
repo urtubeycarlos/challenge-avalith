@@ -1,6 +1,6 @@
 const mySQLDB = require('../mysql.db');
 const { checkParams, checkID } = require('../utils/checkers');
-const { checkValidDateTime, formatDateTimeToMySQL, checkValidDay } = require('../utils/datetime');
+const { checkValidDateTime, formatDateTimeToMySQL, checkValidDay, formatDateTimeToUser } = require('../utils/datetime');
 
 function getAll() {
     return new Promise((resolve, reject) => {
@@ -36,12 +36,17 @@ function getAllVisits() {
     return new Promise((resolve, reject) => {
         const query = 'select clientId, visit_day, visit_date from client_visit';
         const db = mySQLDB();
-        db.query(query, (error, result) => {
+        db.query(query, (error, results) => {
             db.end();
             if (error) {
                 return reject(error);
             }
-            return resolve(result);
+            const formatedResults = results.map((result) => {
+                const resultFormated = result;
+                resultFormated.visitDateTime = formatDateTimeToUser(result.visitDateTime);
+                return resultFormated;
+            });
+            return resolve(formatedResults);
         });
     });
 }
@@ -52,12 +57,17 @@ function getClientVisits(clientId) {
         const query = 'select clientId, visit_day, visit_date from client_visit where clientId = ?';
         const values = [clientId];
         const db = mySQLDB();
-        db.query(query, values, (error, result) => {
+        db.query(query, values, (error, results) => {
             db.end();
             if (error) {
                 return reject(error);
             }
-            return resolve(result);
+            const formatedResults = results.map((result) => {
+                const resultFormated = result;
+                resultFormated.visitDateTime = formatDateTimeToUser(result.visitDateTime);
+                return resultFormated;
+            });
+            return resolve(formatedResults);
         });
     });
 }
@@ -68,11 +78,29 @@ function addVisit({ clientId, day, dateTime }) {
     checkValidDay(day);
     checkValidDateTime(dateTime);
     return new Promise((resolve, reject) => {
-        const db = mySQLDB();
         const query = 'insert into client_visit (clientId, visit_day, visit_datetime) values (?, ?, ?)';
         const values = [clientId, day, formatDateTimeToMySQL(dateTime)];
+        const db = mySQLDB();
         db.query(query, values, (error, result) => {
             db.end();
+            if (error) {
+                return reject(error);
+            }
+            return resolve(result);
+        });
+    });
+}
+
+function removeVisit({ clientId, day, dateTime }) {
+    checkID(clientId);
+    checkParams(day, dateTime);
+    checkValidDay(day);
+    checkValidDateTime(dateTime);
+    return new Promise((resolve, reject) => {
+        const query = 'delete from client_visit where clientId = ? and visitDay = ? and visitDateTime = ?';
+        const values = [clientId, day, formatDateTimeToMySQL(dateTime)];
+        const db = mySQLDB();
+        db.query(query, values, (error, result) => {
             if (error) {
                 return reject(error);
             }
@@ -87,4 +115,5 @@ module.exports = {
     getAllVisits,
     getClientVisits,
     addVisit,
+    removeVisit,
 };
