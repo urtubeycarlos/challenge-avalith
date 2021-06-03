@@ -76,32 +76,32 @@ describe('Testing professor service', () => {
 
         it('getSchedule', async () => {
             const allProfessors = await professorService.getAll();
-            const oneProfessor = allProfessors[allProfessors.length - 1];
-            const result = await professorService.getSchedule(oneProfessor.id);
+            const professor = allProfessors[allProfessors.length - 1];
+            const result = await professorService.getSchedule(professor.id);
             assert.strictEqual(result.length, 2);
         });
 
         it('addSchedule', async () => {
             const allProfessors = await professorService.getAll();
-            const oneProfessor = allProfessors[allProfessors.length - 1];
+            const professor = allProfessors[allProfessors.length - 1];
             const newSchedule = {
-                professorId: oneProfessor.id,
+                professorId: professor.id,
                 day: 5,
                 startHour: '17:30:00',
                 finishHour: '19:00:00',
             };
             await professorService.addSchedule(newSchedule);
-            const result = await professorService.getSchedule(oneProfessor.id);
+            const result = await professorService.getSchedule(professor.id);
             assert.strictEqual(result.length, 3);
         });
 
         it('removeSchedule', async () => {
             const oneSchedule = fakeSchedules[0];
             const allProfessors = await professorService.getAll();
-            const oneProfessor = allProfessors[allProfessors.length - 1];
-            oneSchedule.professorId = oneProfessor.id;
+            const professor = allProfessors[allProfessors.length - 1];
+            oneSchedule.professorId = professor.id;
             await professorService.removeSchedule(oneSchedule);
-            const result = await professorService.getSchedule(oneProfessor.id);
+            const result = await professorService.getSchedule(professor.id);
             assert.strictEqual(result.length, 1);
         });
     });
@@ -184,8 +184,8 @@ describe('Testing professor service', () => {
 
             it('professor not exists', async () => {
                 const allProfessors = await professorService.getAll();
-                const oneProfessor = allProfessors[allProfessors.length - 1];
-                const result = await professorService.getSchedule(oneProfessor.id + 1);
+                const professor = allProfessors[allProfessors.length - 1];
+                const result = await professorService.getSchedule(professor.id + 1);
                 assert.strictEqual(result.length, 0);
             });
         });
@@ -367,9 +367,9 @@ describe('Testing professor service', () => {
 
             it('schedule not exists', async () => {
                 const allProfessors = await professorService.getAll();
-                const oneProfessor = allProfessors[allProfessors.length - 1];
+                const professor = allProfessors[allProfessors.length - 1];
                 const inexistentSchedule = {
-                    professorId: oneProfessor.id,
+                    professorId: professor.id,
                     day: 3,
                     startHour: '14:30:00',
                     finishHour: '17:45:00',
