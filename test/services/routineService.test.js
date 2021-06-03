@@ -3,7 +3,7 @@ const { beforeEach, afterEach } = require('mocha');
 const { assert } = require('chai');
 const routineService = require('../../services/routineService');
 
-describe.only('Testing routine service', () => {
+describe('Testing routine service', () => {
     const routines = [
         {
             clientId: 1,
