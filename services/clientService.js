@@ -16,11 +16,11 @@ function getAll() {
     });
 }
 
-function get(clientId) {
-    checkID(clientId);
+function get({ email, password }) {
+    checkParams(email, password);
     return new Promise((resolve, reject) => {
-        const query = 'select id, name, surname, email, password, role from user where id = ? and role = "client" and active <> 0';
-        const values = [clientId];
+        const query = 'select id, name, surname, email, password, role from user where email = ? and password = ? and role = "client" and active <> 0';
+        const values = [email, password];
         const db = mySQLDB();
         db.query(query, values, (error, result) => {
             db.end();
