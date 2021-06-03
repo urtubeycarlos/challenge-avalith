@@ -33,6 +33,9 @@ router.post('/', checkRole('admin'), async (req, res) => {
         await gymEquipmentService.insert(req.body);
         return res.status(200).send({ inserted: true, msg: 'equipment added successfully' });
     } catch (error) {
+        if (error instanceof TypeError) {
+            return res.status(400).send({ inserted: false, errorCode: 'NULL_BODY', msg: 'body cant be null' });
+        }
         if (error.code === 'ER_NOT_PARAM') {
             return res.status(400).send({ inserted: false, errorCode: error.code, msg: 'missing params' });
         }
