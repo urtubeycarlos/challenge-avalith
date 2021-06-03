@@ -30,7 +30,7 @@ router.get('/:id', checkRole('admin'), async (req, res) => {
 
 router.get('/visits', checkRole('professor', 'admin'), async (req, res) => {
     try {
-        const result = await clientService.getVisits();
+        const result = await clientService.getAllVisits();
         return res.status(200).send(result);
     } catch (error) {
         return res.sendStatus(500);

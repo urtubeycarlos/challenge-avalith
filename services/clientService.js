@@ -32,7 +32,7 @@ function get({ email, password }) {
     });
 }
 
-function getVisits() {
+function getAllVisits() {
     return new Promise((resolve, reject) => {
         const query = 'select clientId, visit_day, visit_date from client_visit';
         const db = mySQLDB();
@@ -84,7 +84,7 @@ function addVisit({ clientId, day, dateTime }) {
 module.exports = {
     getAll,
     get,
-    getVisits,
+    getAllVisits,
     getClientVisits,
     addVisit,
 };
