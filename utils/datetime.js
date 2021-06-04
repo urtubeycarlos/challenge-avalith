@@ -77,7 +77,18 @@ function formatDateTimeToMySQL(dateTime) {
 }
 
 function formatDateTimeToUser(dateTime) {
-    checkValidDateTime(dateTime);
+    if (!dateTime) {
+        const error = new Error('Not datetime');
+        error.code = 'ER_NOT_DATETIME';
+        throw error;
+    }
+    const formats = ['YYYY-MM-DD HH:mm:ss'];
+    const valid = moment(dateTime, formats).isValid();
+    if (!valid) {
+        const error = new Error('Invalid datetime');
+        error.code = 'ER_BAD_DATETIME';
+        throw error;
+    }
     const momentDateTime = moment(dateTime, 'YYYY-MM-DD HH:mm:ss');
     const formated = momentDateTime.format('DD-MM-YYYY HH:mm:ss');
     return formated.toString();
