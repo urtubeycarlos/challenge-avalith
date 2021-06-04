@@ -11,7 +11,7 @@ function sleep(milliseconds) {
     });
 }
 
-describe.only('Testing authentication middleware', () => {
+describe('Testing authentication middleware', () => {
     const req = {
         headers: {
             authorization: '',
