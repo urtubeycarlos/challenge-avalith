@@ -4,8 +4,7 @@ function checkID(id) {
         error.code = 'ER_NOT_ID';
         throw error;
     }
-    const casted = Number.parseInt(id, 10);
-    if (!(Number.isInteger(casted))) {
+    if (!(Number.isInteger(id))) {
         const error = new Error('Id must be a integer');
         error.code = 'ER_ID_NOT_INT';
         throw error;
