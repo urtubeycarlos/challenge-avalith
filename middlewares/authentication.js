@@ -16,6 +16,11 @@ function checkToken(req, res, next) {
 }
 
 function checkRole(...rolesRequired) {
+    if (!rolesRequired) {
+        const error = 'rolesRequired cant be null or undefined';
+        error.code = 'ER_NOT_ROLE';
+        throw error;
+    }
     return (req, res, next) => {
         const isValid = rolesRequired.includes(req.token.role);
         if (isValid) {
