@@ -4,6 +4,7 @@ const routineRouter = require('./routes/routine');
 const equipmentRouter = require('./routes/gymEquipment');
 const professorRouter = require('./routes/professor');
 const clientRouter = require('./routes/client');
+const diffusionRouter = require('./routes/diffusion');
 const { checkToken } = require('./middlewares/authentication');
 require('dotenv').config();
 
@@ -17,6 +18,7 @@ app.use('/routine', routineRouter);
 app.use('/equipment', equipmentRouter);
 app.use('/professor', professorRouter);
 app.use('/client', clientRouter);
+app.use('/diffusion', diffusionRouter);
 
 app.listen(process.env.PORT, () => {
     console.log(`Server listening in: http://localhost:${process.env.PORT}/`);
