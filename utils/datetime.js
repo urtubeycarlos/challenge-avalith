@@ -19,7 +19,7 @@ function checkValidDate(date) {
 }
 
 function checkValidDateTime(dateTime) {
-    const formats = ['DD/MM/YYYY hh:mm:ss', 'DD-MM-YYYY hh:mm:ss'];
+    const formats = ['DD/MM/YYYY HH:mm:ss', 'DD-MM-YYYY HH:mm:ss'];
     const valid = moment(dateTime, formats).isValid();
     if (!valid) {
         const error = new Error('Invalid datetime');
@@ -29,7 +29,7 @@ function checkValidDateTime(dateTime) {
 }
 
 function checkValidTime(time) {
-    const format = 'hh:mm:ss';
+    const format = 'HH:mm:ss';
     const valid = moment(time, format).isValid();
     if (!valid) {
         const error = new Error('Invalid time');
@@ -45,14 +45,14 @@ function formatDateToMySQL(date) {
 }
 
 function formatDateTimeToMySQL(dateTime) {
-    const momentDateTime = moment(dateTime, 'DD-MM-YYYY hh:mm:ss');
-    const formated = momentDateTime.format('YYYY-MM-DD hh:mm:ss');
+    const momentDateTime = moment(dateTime, 'DD-MM-YYYY HH:mm:ss');
+    const formated = momentDateTime.format('YYYY-MM-DD HH:mm:ss');
     return formated.toString();
 }
 
 function formatDateTimeToUser(dateTime) {
-    const momentDateTime = moment(dateTime, 'YYYY-MM-DD hh:mm:ss');
-    const formated = momentDateTime.format('DD-MM-YYYY hh:mm:ss');
+    const momentDateTime = moment(dateTime, 'YYYY-MM-DD HH:mm:ss');
+    const formated = momentDateTime.format('DD-MM-YYYY HH:mm:ss');
     return formated.toString();
 }
 
