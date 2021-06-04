@@ -2,7 +2,7 @@ const { describe, it } = require('mocha');
 const { assert } = require('chai');
 const datetime = require('../../utils/datetime');
 
-describe.only('Testing datetime utils', () => {
+describe('Testing datetime utils', () => {
     describe('checkValidDay', () => {
         it('valid day', () => {
             const day = datetime.checkValidDay(5);
