@@ -6,6 +6,7 @@ function checkValidDay(day) {
         error.code = 'ER_BAD_DAY';
         throw error;
     }
+    return day;
 }
 
 function checkValidDate(date) {
@@ -16,6 +17,7 @@ function checkValidDate(date) {
         error.code = 'ER_BAD_DATE';
         throw error;
     }
+    return valid;
 }
 
 function checkValidDateTime(dateTime) {
@@ -26,6 +28,7 @@ function checkValidDateTime(dateTime) {
         error.code = 'ER_BAD_DATETIME';
         throw error;
     }
+    return valid;
 }
 
 function checkValidTime(time) {
@@ -36,6 +39,7 @@ function checkValidTime(time) {
         error.code = 'ER_BAD_TIME';
         throw error;
     }
+    return valid;
 }
 
 function formatDateToMySQL(date) {
