@@ -77,6 +77,7 @@ function formatDateTimeToMySQL(dateTime) {
 }
 
 function formatDateToUser(date) {
+    checkValidDate(date);
     const momentDate = moment(date, 'YYYY-MM-DD');
     const formated = momentDate.format('DD-MM-YYYY');
     return formated.toString();
