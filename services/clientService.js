@@ -27,7 +27,7 @@ function get({ email, password }) {
             if (error) {
                 return reject(error);
             }
-            return resolve(result);
+            return resolve((result[0] === undefined) ? {} : result[0]);
         });
     });
 }
@@ -72,14 +72,14 @@ function getClientVisits(clientId) {
     });
 }
 
-function addVisit({ clientId, day, dateTime }) {
+function addVisit({ clientId, visitDay, visitDateTime }) {
     checkID(clientId);
-    checkParams(day, dateTime);
-    checkValidDay(day);
-    checkValidDateTime(dateTime);
+    checkParams(visitDay, visitDateTime);
+    checkValidDay(visitDay);
+    checkValidDateTime(visitDateTime);
     return new Promise((resolve, reject) => {
         const query = 'insert into client_visit (clientId, visitDay, visitDateTime) values (?, ?, ?)';
-        const values = [clientId, day, formatDateTimeToMySQL(dateTime)];
+        const values = [clientId, visitDay, formatDateTimeToMySQL(visitDateTime)];
         const db = mySQLDB();
         db.query(query, values, (error, result) => {
             db.end();
@@ -91,16 +91,17 @@ function addVisit({ clientId, day, dateTime }) {
     });
 }
 
-function removeVisit({ clientId, day, dateTime }) {
+function removeVisit({ clientId, visitDay, visitDateTime }) {
     checkID(clientId);
-    checkParams(day, dateTime);
-    checkValidDay(day);
-    checkValidDateTime(dateTime);
+    checkParams(visitDay, visitDateTime);
+    checkValidDay(visitDay);
+    checkValidDateTime(visitDateTime);
     return new Promise((resolve, reject) => {
         const query = 'delete from client_visit where clientId = ? and visitDay = ? and visitDateTime = ?';
-        const values = [clientId, day, formatDateTimeToMySQL(dateTime)];
+        const values = [clientId, visitDay, formatDateTimeToMySQL(visitDateTime)];
         const db = mySQLDB();
         db.query(query, values, (error, result) => {
+            db.end();
             if (error) {
                 return reject(error);
             }
