@@ -1,9 +1,10 @@
 const express = require('express');
+const { checkRole } = require('../middlewares/authentication');
 const professorService = require('../services/professorService');
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', checkRole('admin'), async (req, res) => {
     try {
         const result = await professorService.getAll();
         return res.status(200).send(result);
@@ -12,7 +13,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', checkRole('admin'), async (req, res) => {
     try {
         const result = await professorService.get(req.params.id);
         return res.status(200).send(result);
@@ -27,7 +28,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.get('/schedule', async (req, res) => {
+router.get('/schedule', checkRole('client', 'admin'), async (req, res) => {
     try {
         const result = await professorService.getSchedules();
         return res.status(200).send(result);
@@ -36,7 +37,7 @@ router.get('/schedule', async (req, res) => {
     }
 });
 
-router.get('/schedule/:id', async (req, res) => {
+router.get('/schedule/:id', checkRole('client', 'admin'), async (req, res) => {
     try {
         const result = await professorService.getSchedule(req.params.id);
         return res.status(200).send(result);
@@ -51,7 +52,7 @@ router.get('/schedule/:id', async (req, res) => {
     }
 });
 
-router.post('/schedule', async (req, res) => {
+router.post('/schedule', checkRole('admin'), async (req, res) => {
     try {
         await professorService.addSchedule(req.body);
         return res.status(200).send({ added: true, msg: 'schedule added successfully' });
@@ -75,7 +76,7 @@ router.post('/schedule', async (req, res) => {
     }
 });
 
-router.delete('/schedule', async (req, res) => {
+router.delete('/schedule', checkRole('admin'), async (req, res) => {
     try {
         await professorService.removeSchedule(req.body);
         return res.status(200).send({ deleted: true, msg: 'schedule deleted successfully' });
