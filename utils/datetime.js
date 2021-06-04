@@ -76,13 +76,6 @@ function formatDateTimeToMySQL(dateTime) {
     return formated.toString();
 }
 
-function formatDateToUser(date) {
-    checkValidDate(date);
-    const momentDate = moment(date, 'YYYY-MM-DD');
-    const formated = momentDate.format('DD-MM-YYYY');
-    return formated.toString();
-}
-
 function formatDateTimeToUser(dateTime) {
     checkValidDateTime(dateTime);
     const momentDateTime = moment(dateTime, 'YYYY-MM-DD HH:mm:ss');
@@ -97,6 +90,5 @@ module.exports = {
     checkValidDateTime,
     formatDateToMySQL,
     formatDateTimeToMySQL,
-    formatDateToUser,
     formatDateTimeToUser,
 };
