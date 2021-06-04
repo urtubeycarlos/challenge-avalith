@@ -9,6 +9,7 @@ function checkID(id) {
         error.code = 'ER_ID_NOT_INT';
         throw error;
     }
+    return id;
 }
 
 function checkParams(...params) {
@@ -22,6 +23,7 @@ function checkParams(...params) {
         error.code = 'ER_NOT_PARAM';
         throw error;
     }
+    return params;
 }
 
 module.exports = {
