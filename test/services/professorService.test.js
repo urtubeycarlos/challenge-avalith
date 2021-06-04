@@ -303,9 +303,9 @@ describe('Testing professor service', () => {
 
             it('empty param', async () => {
                 try {
-                    await professorService.get({});
+                    await professorService.removeSchedule({});
                 } catch (error) {
-                    assert.strictEqual(error.code, 'ER_NOT_PARAM');
+                    assert.strictEqual(error.code, 'ER_NOT_ID');
                 }
             });
 
