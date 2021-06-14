@@ -16,14 +16,14 @@ router.post('/', checkRole('admin'), async (req, res) => {
     }
 
     try {
-        await emailService.sendMail(req.body);
+        const result = await emailService.sendMail(req.body);
+        return res.send(result);
     } catch (error) {
         if (error.code === 'ER_NOT_PARAM') {
-            return res.sendStatus(400);
+            return res.status(400).send({ error: error.code, msg: 'missing param' });
         }
         return res.sendStatus(500);
     }
-    return res.sendStatus(200);
 });
 
 module.exports = router;
