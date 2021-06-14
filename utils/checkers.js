@@ -26,7 +26,22 @@ function checkParams(...params) {
     return params;
 }
 
+function checkBlankParams(...params) {
+    let blankParam = false;
+    for (let i = 0; i < params.length; i += 1) {
+        const param = params[i];
+        blankParam = blankParam || param === '';
+    }
+    if (blankParam) {
+        const error = new Error('blank parameter(s)');
+        error.code = 'ER_BLANK_PARAM';
+        throw error;
+    }
+    return params;
+}
+
 module.exports = {
     checkID,
     checkParams,
+    checkBlankParams,
 };
