@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const md5 = require('md5');
 const mySQLDB = require('../mysql.db');
-const { checkParams, checkBlankParams } = require('../utils/checkers');
+const { checkParams } = require('../utils/checkers');
 require('dotenv').config();
 
 function getAll() {
@@ -34,29 +34,17 @@ function get({ email, password }) {
     });
 }
 
-function update({ email, password, newEmail, newPassword, newName, newSurname, newRole }) {
-    checkParams(email, password);
-    checkBlankParams(email, password, newPassword, newName, newSurname, newRole);
-    if (newPassword) {
-        checkBlankParams(newPassword);
-    }
-    if (newName) {
-        checkBlankParams(newName);
-    }
-    if (newSurname) {
-        checkBlankParams(newSurname);
-    }
-    if (newRole) {
-        checkBlankParams(newRole);
+function update({ email, password, newPassword, role }) {
+    checkParams(email, password, newPassword);
+    if (newPassword === '') {
+        const error = new Error('new password cant be blank');
+        error.code = 'ER_BLANK_NPASSWORD';
+        throw error;
     }
     return new Promise((resolve, reject) => {
-        const newEmailQuery = (newEmail) ? `, email = ${newEmail}` : '';
-        const newPasswordQuery = (newPassword) ? `, password = ${md5(newPassword)}` : '';
-        const newNameQuery = (newName) ? `, name = ${newName}` : '';
-        const newSurnameQuery = (newSurname) ? `, surname = ${newSurname}` : '';
-        const newRoleQuery = (newRole) ? `, role = ${newRole}` : '';
-        const query = `update user set active = 1${newEmailQuery}${newPasswordQuery}${newNameQuery}${newSurnameQuery}${newRoleQuery} where email = ? and password = ?`;
-        const values = [email, md5(password)];
+        const newRole = (role) ? `, role = ${role}` : '';
+        const query = `update user set password = ?, active = 1${newRole} where email = ? and password = ?`;
+        const values = [md5(newPassword), email, md5(password)];
         const db = mySQLDB();
         db.query(query, values, (error, result) => {
             db.end();
@@ -78,8 +66,7 @@ function insert({ name, surname, email, password, role }) {
             db.end();
             if (error) {
                 if (error.code === 'ER_DUP_ENTRY') {
-                    const obj = { email, password, newPassword: password, newRole: role };
-                    return resolve(update(obj));
+                    return resolve(update({ email, password, newPassword: password, role }));
                 }
                 return reject(error);
             }
