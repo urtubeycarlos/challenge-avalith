@@ -34,7 +34,7 @@ function get({ email, password }) {
     });
 }
 
-function update({ email, password, newPassword, role }) {
+function update({ email, password, newEmail, newPassword, newName, newSurname, newRole }) {
     checkParams(email, password, newPassword);
     if (newPassword === '') {
         const error = new Error('new password cant be blank');
@@ -42,9 +42,13 @@ function update({ email, password, newPassword, role }) {
         throw error;
     }
     return new Promise((resolve, reject) => {
-        const newRole = (role) ? `, role = ${role}` : '';
-        const query = `update user set password = ?, active = 1${newRole} where email = ? and password = ?`;
-        const values = [md5(newPassword), email, md5(password)];
+        const newEmailQuery = (newEmail) ? `, email = ${newEmail}` : '';
+        const newPasswordQuery = (newPassword) ? `, password = ${md5(newPassword)}` : '';
+        const newNameQuery = (newName) ? `, name = ${newName}` : '';
+        const newSurnameQuery = (newSurname) ? `, surname = ${newSurname}` : '';
+        const newRoleQuery = (newRole) ? `, role = ${newRole}` : '';
+        const query = `update user set active = 1${newEmailQuery}${newPasswordQuery}${newNameQuery}${newSurnameQuery}${newRoleQuery} where email = ? and password = ?`;
+        const values = [email, md5(password)];
         const db = mySQLDB();
         db.query(query, values, (error, result) => {
             db.end();
