@@ -13,7 +13,7 @@ describe('Testing email service', async () => {
         it('sendEmail', async () => {
             const result = await sendMail(fakeEmail);
             assert.isTrue(result.response.includes('OK'));
-        }).timeout(5000);
+        }).timeout(10000);
     });
 
     describe('border cases', () => {
