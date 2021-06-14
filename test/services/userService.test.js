@@ -254,6 +254,20 @@ describe('Testing userService', () => {
                 }
             });
 
+            it('blank param', async () => {
+                const blankParams = {
+                    email: 'urtubeycarlos.0510@gmail.com',
+                    password: '1234',
+                    newPassword: '',
+                };
+
+                try {
+                    await userService.update(blankParams);
+                } catch (error) {
+                    assert.strictEqual(error.code, 'ER_BLANK_PARAM');
+                }
+            });
+
             it('user not exists', async () => {
                 const inexistentUser = {
                     email: 'erik@coldmail.com',
