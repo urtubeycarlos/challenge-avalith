@@ -6,7 +6,7 @@ describe('Testing email service', async () => {
     const fakeEmail = {
         subject: 'subject',
         content: 'content',
-        recipients: ['huiifzdr@sharklasers.com'],
+        recipients: ['huiifzdr@sharklasers.com'], // Guerrilla mails service.
     };
 
     describe('mail methods', () => {
@@ -17,7 +17,15 @@ describe('Testing email service', async () => {
     });
 
     describe('border cases', () => {
-        it('null or undefined params', async () => {
+        it('null or undefined param', async () => {
+            try {
+                await sendMail(null);
+            } catch (error) {
+                assert.isTrue(error instanceof TypeError);
+            }
+        });
+
+        it('null or undefined values', async () => {
             try {
                 await sendMail({ subject: null, content: null, recipients: null });
             } catch (error) {
