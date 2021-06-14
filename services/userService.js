@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const md5 = require('md5');
 const mySQLDB = require('../mysql.db');
-const { checkParams } = require('../utils/checkers');
+const { checkParams, checkBlankParams } = require('../utils/checkers');
 require('dotenv').config();
 
 function getAll() {
@@ -35,11 +35,19 @@ function get({ email, password }) {
 }
 
 function update({ email, password, newEmail, newPassword, newName, newSurname, newRole }) {
-    checkParams(email, password, newPassword);
-    if (newPassword === '') {
-        const error = new Error('new password cant be blank');
-        error.code = 'ER_BLANK_NPASSWORD';
-        throw error;
+    checkParams(email, password);
+    checkBlankParams(email, password, newPassword, newName, newSurname, newRole);
+    if (newPassword) {
+        checkBlankParams(newPassword);
+    }
+    if (newName) {
+        checkBlankParams(newName);
+    }
+    if (newSurname) {
+        checkBlankParams(newSurname);
+    }
+    if (newRole) {
+        checkBlankParams(newRole);
     }
     return new Promise((resolve, reject) => {
         const newEmailQuery = (newEmail) ? `, email = ${newEmail}` : '';
@@ -70,7 +78,8 @@ function insert({ name, surname, email, password, role }) {
             db.end();
             if (error) {
                 if (error.code === 'ER_DUP_ENTRY') {
-                    return resolve(update({ email, password, newPassword: password, role }));
+                    const obj = { email, password, newPassword: password, newRole: role };
+                    return resolve(update(obj));
                 }
                 return reject(error);
             }
