@@ -61,17 +61,17 @@ router.post('/signup_admin', checkRole('admin'), async (req, res) => {
     }
 });
 
-router.put('/changepassword', async (req, res) => {
+router.put('/update', async (req, res) => {
     delete req.body.role;
     try {
         const result = await userService.update(req.body);
         if (result.affectedRows === 0) {
-            return res.status(400).send({ password_changed: false, msg: 'invalid email or password' });
+            return res.status(400).send({ updated: false, msg: 'invalid email or password' });
         }
-        return res.status(200).send({ password_changed: true, msg: 'password changed' });
+        return res.status(200).send({ updated: true, msg: 'password changed' });
     } catch (error) {
         if (error.code === 'ER_NOT_PARAM') {
-            return res.status(400).send({ password_changed: false, errorCode: error.code, msg: 'missing params' });
+            return res.status(400).send({ updated: false, errorCode: error.code, msg: 'missing params' });
         }
         return res.sendStatus(500);
     }
