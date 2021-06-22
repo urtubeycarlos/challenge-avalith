@@ -3,7 +3,7 @@ const { checkParams, checkID } = require('../utils/checkers');
 
 function getAll() {
     return new Promise((resolve, reject) => {
-        const query = 'select id, name, brand, type, model, status from equipment';
+        const query = 'SELECT id, name, brand, type, model, status FROM equipment';
         const db = mySQLDB();
         db.query(query, (error, result) => {
             db.end();
@@ -18,7 +18,7 @@ function getAll() {
 function get(id) {
     checkID(id);
     return new Promise((resolve, reject) => {
-        const query = 'select id, name, brand, type, model, status from equipment where id = ?';
+        const query = 'SELECT id, name, brand, type, model, status FROM equipment WHERE id = ?';
         const db = mySQLDB();
         db.query(query, id, (error, result) => {
             db.end();
@@ -33,7 +33,7 @@ function get(id) {
 function insert({ name, brand, type, model }) {
     checkParams(name, brand, type, model);
     return new Promise((resolve, reject) => {
-        const query = 'insert into equipment (name, brand, type, model) values (?, ?, ?, ?)';
+        const query = 'INSERT INTO equipment (name, brand, type, model) VALUES (?, ?, ?, ?)';
         const values = [name, brand, type, model];
         const db = mySQLDB();
         db.query(query, values, (error, result) => {
@@ -55,7 +55,7 @@ function update(id, status) {
         throw error;
     }
     return new Promise((resolve, reject) => {
-        const query = 'update equipment set status = ? where id = ?';
+        const query = 'UPDATE equipment SET status = ? WHERE id = ?';
         const values = [status, id];
         const db = mySQLDB();
         db.query(query, values, (error, result) => {
@@ -71,7 +71,7 @@ function update(id, status) {
 function remove(id) {
     checkID(id);
     return new Promise((resolve, reject) => {
-        const query = 'delete from equipment where id = ?';
+        const query = 'DELETE FROM equipment WHERE id = ?';
         const db = mySQLDB();
         db.query(query, id, (error, result) => {
             db.end();

@@ -4,7 +4,7 @@ const { checkValidDateTime, formatDateTimeToMySQL, checkValidDay, formatDateTime
 
 function getAll() {
     return new Promise((resolve, reject) => {
-        const query = 'select id, name, surname, email, password, role from user where role = "client" and active <> 0';
+        const query = 'SELECT id, name, surname, email, password, role FROM user WHERE role = "client" AND active <> 0';
         const db = mySQLDB();
         db.query(query, (error, result) => {
             db.end();
@@ -19,7 +19,7 @@ function getAll() {
 function get({ email, password }) {
     checkParams(email, password);
     return new Promise((resolve, reject) => {
-        const query = 'select id, name, surname, email, password, role from user where email = ? and password = ? and role = "client" and active <> 0';
+        const query = 'SELECT id, name, surname, email, password, role FROM user WHERE email = ? AND password = ? AND role = "client" AND active <> 0';
         const values = [email, password];
         const db = mySQLDB();
         db.query(query, values, (error, result) => {
@@ -34,7 +34,7 @@ function get({ email, password }) {
 
 function getAllVisits() {
     return new Promise((resolve, reject) => {
-        const query = 'select clientId, visitDay, visitDateTime from client_visit';
+        const query = 'SELECT clientId, visitDay, visitDateTime FROM client_visit';
         const db = mySQLDB();
         db.query(query, (error, results) => {
             db.end();
@@ -54,7 +54,7 @@ function getAllVisits() {
 function getClientVisits(clientId) {
     checkID(clientId);
     return new Promise((resolve, reject) => {
-        const query = 'select clientId, visitDay, visitDateTime from client_visit where clientId = ?';
+        const query = 'SELECT clientId, visitDay, visitDateTime FROM client_visit WHERE clientId = ?';
         const db = mySQLDB();
         db.query(query, clientId, (error, results) => {
             db.end();
@@ -77,7 +77,7 @@ function addVisit({ clientId, visitDay, visitDateTime }) {
     checkValidDay(visitDay);
     checkValidDateTime(visitDateTime);
     return new Promise((resolve, reject) => {
-        const query = 'insert into client_visit (clientId, visitDay, visitDateTime) values (?, ?, ?)';
+        const query = 'INSERT INTO client_visit (clientId, visitDay, visitDateTime) VALUES (?, ?, ?)';
         const values = [clientId, visitDay, formatDateTimeToMySQL(visitDateTime)];
         const db = mySQLDB();
         db.query(query, values, (error, result) => {
@@ -96,7 +96,7 @@ function removeVisit({ clientId, visitDay, visitDateTime }) {
     checkValidDay(visitDay);
     checkValidDateTime(visitDateTime);
     return new Promise((resolve, reject) => {
-        const query = 'delete from client_visit where clientId = ? and visitDay = ? and visitDateTime = ?';
+        const query = 'DELETE FROM client_visit WHERE clientId = ? AND visitDay = ? AND visitDateTime = ?';
         const values = [clientId, visitDay, formatDateTimeToMySQL(visitDateTime)];
         const db = mySQLDB();
         db.query(query, values, (error, result) => {

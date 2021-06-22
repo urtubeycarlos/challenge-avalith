@@ -4,7 +4,7 @@ const { checkValidDay, checkValidTime } = require('../utils/datetime');
 
 function getAll() {
     return new Promise((resolve, reject) => {
-        const query = 'select id, name, surname, email, password, role from user where role = "professor" and active <> 0';
+        const query = 'SELECT id, name, surname, email, password, role FROM user WHERE role = "professor" AND active <> 0';
         const db = mySQLDB();
         db.query(query, (error, result) => {
             db.end();
@@ -19,7 +19,7 @@ function getAll() {
 function get({ email, password }) {
     checkParams(email, password);
     return new Promise((resolve, reject) => {
-        const query = 'select id, name, surname, email, password, role from user where email = ? and password = ? and role = "professor" and active <> 0';
+        const query = 'SELECT id, name, surname, email, password, role FROM user WHERE email = ? AND password = ? AND role = "professor" AND active <> 0';
         const values = [email, password];
         const db = mySQLDB();
         db.query(query, values, (error, result) => {
@@ -34,7 +34,7 @@ function get({ email, password }) {
 
 function getSchedules() {
     return new Promise((resolve, reject) => {
-        const query = 'select ps.professorId, p.name, p.surname, ps.day, ps.startHour, ps.finishHour from professor_schedule as ps join user as p on ps.professorId = p.id';
+        const query = 'SELECT ps.professorId, p.name, p.surname, ps.day, ps.startHour, ps.finishHour FROM professor_schedule AS ps JOIN user AS p ON ps.professorId = p.id';
         const db = mySQLDB();
         db.query(query, (error, result) => {
             db.end();
@@ -49,7 +49,7 @@ function getSchedules() {
 function getSchedule(professorId) {
     checkID(professorId);
     return new Promise((resolve, reject) => {
-        const query = 'select ps.professorId, p.name, p.surname, ps.day, ps.startHour, ps.finishHour from professor_schedule as ps join user as p on ps.professorId = p.id and ps.professorId = ?';
+        const query = 'SELECT ps.professorId, p.name, p.surname, ps.day, ps.startHour, ps.finishHour FROM professor_schedule AS ps JOIN user AS p ON ps.professorId = p.id AND ps.professorId = ?';
         const db = mySQLDB();
         db.query(query, professorId, (error, result) => {
             db.end();
@@ -68,7 +68,7 @@ function addSchedule({ professorId, day, startHour, finishHour }) {
     checkValidTime(startHour);
     checkValidTime(finishHour);
     return new Promise((resolve, reject) => {
-        const query = 'insert into professor_schedule (professorId, day, startHour, finishHour) values (?, ?, ?, ?)';
+        const query = 'INSERT INTO professor_schedule (professorId, day, startHour, finishHour) VALUES (?, ?, ?, ?)';
         const values = [professorId, day, startHour, finishHour];
         const db = mySQLDB();
         db.query(query, values, (error, result) => {
@@ -88,7 +88,7 @@ function removeSchedule({ professorId, day, startHour, finishHour }) {
     checkValidTime(startHour);
     checkValidTime(finishHour);
     return new Promise((resolve, reject) => {
-        const query = 'delete from professor_schedule where professorID = ? and day = ? and startHour = ? and finishHour = ?';
+        const query = 'DELETE FROM professor_schedule WHERE professorID = ? AND day = ? AND startHour = ? AND finishHour = ?';
         const values = [professorId, day, startHour, finishHour];
         const db = mySQLDB();
         db.query(query, values, (error, result) => {

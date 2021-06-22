@@ -5,7 +5,7 @@ require('dotenv').config();
 
 function getAll() {
     return new Promise((resolve, reject) => {
-        const query = 'select id, name, surname, email, password, role from user where active <> 0';
+        const query = 'SELECT id, name, surname, email, password, role FROM user WHERE active <> 0';
         const db = mySQLDB();
         db.query(query, (error, result) => {
             db.end();
@@ -20,7 +20,7 @@ function getAll() {
 function get({ email, password }) {
     checkParams(email, password);
     return new Promise((resolve, reject) => {
-        const query = 'select id, name, surname, email, password, role from user where email = ? and password = ? and active <> 0';
+        const query = 'SELECT id, name, surname, email, password, role FROM user WHERE email = ? AND password = ? AND active <> 0';
         const values = [email, md5(password)];
         const db = mySQLDB();
         db.query(query, values, (error, result) => {
@@ -53,7 +53,7 @@ function update({ email, password, newEmail, newPassword, newName, newSurname, n
         const newNameQuery = (newName) ? `, name = '${newName}'` : '';
         const newSurnameQuery = (newSurname) ? `, surname = '${newSurname}'` : '';
         const newRoleQuery = (newRole) ? `, role = ${newRole}` : '';
-        const query = `update user set active = 1${newEmailQuery}${newPasswordQuery}${newNameQuery}${newSurnameQuery}${newRoleQuery} where email = ? and password = ?`;
+        const query = `UPDATE user SET active = 1${newEmailQuery}${newPasswordQuery}${newNameQuery}${newSurnameQuery}${newRoleQuery} WHERE email = ? AND password = ?`;
         const values = [email, md5(password)];
         const db = mySQLDB();
         db.query(query, values, (error, result) => {
@@ -69,7 +69,7 @@ function update({ email, password, newEmail, newPassword, newName, newSurname, n
 function insert({ name, surname, email, password, role }) {
     checkParams(name, surname, email, password, role);
     return new Promise((resolve, reject) => {
-        const query = 'insert into user (name, surname, email, password, role) values (?, ?, ?, ?, ?)';
+        const query = 'INSERT INTO user (name, surname, email, password, role) VALUES (?, ?, ?, ?, ?)';
         const values = [name, surname, email, md5(password), role];
         const db = mySQLDB();
         db.query(query, values, (error, result) => {
@@ -96,7 +96,7 @@ function insert({ name, surname, email, password, role }) {
 function remove({ email, password }) {
     checkParams(email, password);
     return new Promise((resolve, reject) => {
-        const query = 'update user set active = 0 where email = ? and password = ?';
+        const query = 'UPDATE user SET active = 0 WHERE email = ? AND password = ?';
         const values = [email, md5(password)];
         const db = mySQLDB();
         db.query(query, values, (error, result) => {
