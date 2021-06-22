@@ -1,6 +1,6 @@
 const express = require('express');
 const userService = require('../services/userService');
-const { checkRole } = require('../middlewares/authentication');
+const { checkToken, checkRole } = require('../middlewares/authentication');
 
 const router = express.Router();
 
@@ -43,7 +43,7 @@ router.post('/signup', async (req, res) => {
     }
 });
 
-router.post('/signup_admin', checkRole('admin'), async (req, res) => {
+router.post('/signup_admin', checkToken, checkRole('admin'), async (req, res) => {
     if (!req.body.role) {
         return res.status(400).send({ signup: false, errorCode: 'ER_NOT_PARAM', msg: 'missing params' });
     }
