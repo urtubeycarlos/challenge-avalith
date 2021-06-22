@@ -1,5 +1,6 @@
 const express = require('express');
 const userService = require('../services/userService');
+const { createToken } = require('../utils/authentication');
 const { checkToken, checkRole } = require('../middlewares/authentication');
 
 const router = express.Router();
@@ -12,7 +13,7 @@ router.post('/login', async (req, res) => {
         }
         try {
             delete user.password;
-            const encodedToken = await userService.createToken(user, '1d');
+            const encodedToken = await createToken(user, '1d');
             return res.status(202).send({ logged: true, msg: 'logged succesfully', token: encodedToken });
         } catch (error) {
             return res.sendStatus(500);
