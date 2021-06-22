@@ -64,7 +64,7 @@ router.put('/', checkRole('professor', 'admin'), async (req, res) => {
 router.delete('/:id', checkRole('professor', 'admin'), async (req, res) => {
     try {
         const result = await routineService.remove(req.params.id);
-        if (result.result.n === 0) {
+        if (!result.result.n) {
             return res.status(400).send({ deleted: false, errorCode: 'ER_NOT_EXISTS', msg: 'routine not exists for passed id' });
         }
         return res.status(200).send({ deleted: true, msg: 'routine deleted successfully' });

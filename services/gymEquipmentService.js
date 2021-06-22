@@ -25,7 +25,7 @@ function get(id) {
             if (error) {
                 return reject(error);
             }
-            return resolve((result[0] === undefined) ? {} : result[0]);
+            return resolve((!result[0]) ? {} : result[0]);
         });
     });
 }

@@ -70,7 +70,7 @@ router.put('/:id', checkRole('admin', 'professor'), async (req, res) => {
 router.delete('/:id', checkRole('admin'), async (req, res) => {
     try {
         const result = await gymEquipmentService.remove(req.params.id);
-        if (result.affectedRows === 0) {
+        if (!result.affectedRows) {
             return res.status(400).send({ deleted: false, msg: 'equipment not exists' });
         }
         return res.status(200).send({ deleted: true, msg: 'equipment deleted successfully' });

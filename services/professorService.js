@@ -27,7 +27,7 @@ function get({ email, password }) {
             if (error) {
                 return reject(error);
             }
-            return resolve((result[0] === undefined) ? {} : result[0]);
+            return resolve((!result[0]) ? {} : result[0]);
         });
     });
 }
@@ -50,9 +50,8 @@ function getSchedule(professorId) {
     checkID(professorId);
     return new Promise((resolve, reject) => {
         const query = 'select ps.professorId, p.name, p.surname, ps.day, ps.startHour, ps.finishHour from professor_schedule as ps join user as p on ps.professorId = p.id and ps.professorId = ?';
-        const values = [professorId];
         const db = mySQLDB();
-        db.query(query, values, (error, result) => {
+        db.query(query, professorId, (error, result) => {
             db.end();
             if (error) {
                 return reject(error);

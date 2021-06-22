@@ -29,7 +29,7 @@ function get({ email, password }) {
             if (error) {
                 return reject(error);
             }
-            return resolve((result[0] === undefined) ? {} : result[0]);
+            return resolve((!result[0]) ? {} : result[0]);
         });
     });
 }
@@ -111,7 +111,7 @@ function remove({ email, password }) {
 }
 
 function createToken(user, expiresIn) {
-    if (!user || Object.keys(user).length === 0) {
+    if (!user || !Object.keys(user).length) {
         const error = new Error('Not user passed as parameter');
         error.code = 'ER_NOT_USER';
         throw error;

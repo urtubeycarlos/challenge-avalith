@@ -27,7 +27,7 @@ function get({ email, password }) {
             if (error) {
                 return reject(error);
             }
-            return resolve((result[0] === undefined) ? {} : result[0]);
+            return resolve((!result[0]) ? {} : result[0]);
         });
     });
 }
@@ -55,9 +55,8 @@ function getClientVisits(clientId) {
     checkID(clientId);
     return new Promise((resolve, reject) => {
         const query = 'select clientId, visitDay, visitDateTime from client_visit where clientId = ?';
-        const values = [clientId];
         const db = mySQLDB();
-        db.query(query, values, (error, results) => {
+        db.query(query, clientId, (error, results) => {
             db.end();
             if (error) {
                 return reject(error);

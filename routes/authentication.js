@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/login', async (req, res) => {
     try {
         const user = await userService.get(req.body);
-        if (Object.keys(user).length === 0) {
+        if (!Object.keys(user).length) {
             return res.status(403).send({ logged: false, msg: 'invalid email or password' });
         }
         try {
@@ -64,7 +64,7 @@ router.post('/signup_admin', checkToken, checkRole('admin'), async (req, res) =>
 router.put('/update', async (req, res) => {
     try {
         const result = await userService.update(req.body);
-        if (result.affectedRows === 0) {
+        if (!result.affectedRows) {
             return res.status(400).send({ updated: false, msg: 'invalid email or password' });
         }
         return res.status(200).send({ updated: true, msg: 'password changed' });
@@ -79,7 +79,7 @@ router.put('/update', async (req, res) => {
 router.delete('/delete', async (req, res) => {
     try {
         const result = await userService.remove(req.body);
-        if (result.affectedRows === 0) {
+        if (!result.affectedRows) {
             return res.status(400).send({ deleted: false, msg: 'invalid email or password' });
         }
         return res.status(200).send({ deleted: false, msg: 'user eliminated succesfully' });
