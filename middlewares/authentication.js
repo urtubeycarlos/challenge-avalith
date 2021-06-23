@@ -30,7 +30,15 @@ function checkRole(...rolesRequired) {
     };
 }
 
+function checkIDs(req, res, next) {
+    if (Number.parseInt(req.params.id, 10) === req.token.id) {
+        return next();
+    }
+    return res.sendStatus(401);
+}
+
 module.exports = {
     checkToken,
     checkRole,
+    checkIDs,
 };
