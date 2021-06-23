@@ -3,9 +3,21 @@ const mySQLDB = require('../mysql.db');
 const { checkParams, checkBlankParams } = require('../utils/checkers');
 require('dotenv').config();
 
-function getAll() {
+function getAll(...roles) {
     return new Promise((resolve, reject) => {
-        const query = 'SELECT id, name, surname, email, password, role FROM user WHERE active <> 0';
+        let roleQuery = '';
+        if (roles.length) {
+            roleQuery = ' AND (';
+            for (let i = 0; i < roles.length; i += 1) {
+                const role = roles[i];
+                roleQuery += `role = ${role}`;
+                if (i !== roles.length) {
+                    roleQuery += ' OR ';
+                }
+            }
+            roleQuery += ')';
+        }
+        const query = `SELECT id, name, surname, email, password, role FROM user WHERE active <> 0${roleQuery}`;
         const db = mySQLDB();
         db.query(query, (error, result) => {
             db.end();
@@ -17,11 +29,18 @@ function getAll() {
     });
 }
 
-function get({ email, password }) {
+function get({ id, email, password }) {
     checkParams(email, password);
     return new Promise((resolve, reject) => {
-        const query = 'SELECT id, name, surname, email, password, role FROM user WHERE email = ? AND password = ? AND active <> 0';
-        const values = [email, md5(password)];
+        let query;
+        let values;
+        if (id) {
+            query = 'SELECT id, name, surname, email, password, role FROM user WHERE id = ? AND active <> 0';
+            values = [id];
+        } else {
+            query = 'SELECT id, name, surname, email, password, role FROM user WHERE email = ? AND password = ? AND active <> 0';
+            values = [email, md5(password)];
+        }
         const db = mySQLDB();
         db.query(query, values, (error, result) => {
             db.end();
