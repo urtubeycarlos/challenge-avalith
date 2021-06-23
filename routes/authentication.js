@@ -1,10 +1,39 @@
 const express = require('express');
 const userService = require('../services/userService');
 const { createToken } = require('../utils/authentication');
-const { checkToken, checkRole } = require('../middlewares/authentication');
+const { checkToken, checkRole, checkIDs } = require('../middlewares/authentication');
 
 const router = express.Router();
 const roles = ['client', 'professor', 'admin'];
+
+router.get('/all', checkToken, checkRole('admin'), async (req, res) => {
+    try {
+        const result = await userService.getAll();
+        return res.status(200).send(result);
+    } catch (error) {
+        return res.sendStatus(500);
+    }
+});
+
+router.get('/client', checkToken, checkRole('professor', 'admin'), async (req, res) => {
+    try {
+        const result = await userService.getAll('client');
+        return res.status(200).send(result);
+    } catch (error) {
+        return res.sendStatus(500);
+    }
+});
+
+router.get('/professor/:id', checkToken, checkRole('professor', 'admin'), checkIDs, async (req, res, next) => {
+    try {
+        const result = await userService.get({ id: req.params.id });
+        return res.status(200).send(result);
+    } catch (error) {
+        error.action = 'get';
+        res.locals.error = error;
+        return next();
+    }
+});
 
 router.post('/login', async (req, res, next) => {
     try {
