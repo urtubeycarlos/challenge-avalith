@@ -31,6 +31,9 @@ function checkRole(...rolesRequired) {
 }
 
 function checkIDs(req, res, next) {
+    if (req.token.role === 'admin') {
+        return next();
+    }
     if (Number.parseInt(req.params.id, 10) === req.token.id) {
         return next();
     }
