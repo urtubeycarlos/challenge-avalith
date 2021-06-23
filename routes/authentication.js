@@ -4,65 +4,56 @@ const { createToken } = require('../utils/authentication');
 const { checkToken, checkRole } = require('../middlewares/authentication');
 
 const router = express.Router();
+const roles = ['client', 'professor', 'admin'];
 
-router.post('/login', async (req, res) => {
+router.post('/login', async (req, res, next) => {
     try {
         const user = await userService.get(req.body);
         if (!Object.keys(user).length) {
-            return res.status(403).send({ logged: false, msg: 'invalid email or password' });
+            return res.status(403).send({ logged: false, errorCode: 'ER_INV_CREDENTIAL' });
         }
         try {
             delete user.password;
             const encodedToken = await createToken(user, '1d');
-            return res.status(202).send({ logged: true, msg: 'logged succesfully', token: encodedToken });
+            return res.status(202).send({ logged: true, token: encodedToken });
         } catch (error) {
             return res.sendStatus(500);
         }
     } catch (error) {
-        if (error.code === 'ER_NOT_PARAM') {
-            return res.sendStatus(400);
-        }
-        return res.sendStatus(500);
+        error.action = 'login';
+        res.locals.error = error;
+        return next();
     }
 });
 
-router.post('/signup', async (req, res) => {
-    if (!req.body.role) {
-        return res.status(400).send({ signup: false, errorCode: 'ER_NOT_PARAM', msg: 'missing params' });
+router.post('/signup', async (req, res, next) => {
+    req.body.role = 'client'; // un rol en la bd comienza en 1, por eso al indice de 'user' se le suma 1
+    try {
+        await userService.insert(req.body);
+        return res.status(200).send({ signup: true });
+    } catch (error) {
+        error.action = 'signup';
+        res.locals.error = error;
+        return next();
     }
-    if (req.body.role < 1 || req.body.role > 2) {
-        return res.status(400).send({ signup: false, errorCode: 'ER_BAD_ROLE', msg: 'bad role' });
+});
+
+router.post('/signup_admin', checkToken, checkRole('admin'), async (req, res, next) => {
+    const validRole = roles.indexOf(req.body.role); // buscamos si se encuentra el rol en el array
+    if (validRole === -1) { // -1 si no se encontró...
+        return res.status(400).send({ signup: false, errorCode: 'ER_BAD_ROLE' });
     }
     try {
         await userService.insert(req.body);
-        return res.status(200).send({ signup: true, msg: 'user added successfully' });
+        return res.status(200).send({ signup: true });
     } catch (error) {
-        if (error.code === 'ER_NOT_PARAM') {
-            return res.status(400).send({ signup: false, errorCode: error.code, msg: 'missing params' });
-        }
-        return res.sendStatus(500);
+        error.action = 'signup';
+        res.locals.error = error;
+        return next();
     }
 });
 
-router.post('/signup_admin', checkToken, checkRole('admin'), async (req, res) => {
-    if (!req.body.role) {
-        return res.status(400).send({ signup: false, errorCode: 'ER_NOT_PARAM', msg: 'missing params' });
-    }
-    if (req.body.role < 1 || req.body.role > 3) {
-        return res.status(400).send({ signup: false, msg: 'bad role' });
-    }
-    try {
-        await userService.insert(req.body);
-        return res.status(200).send({ signup: true, msg: 'user added successfully' });
-    } catch (error) {
-        if (error.code === 'ER_NOT_PARAM') {
-            return res.status(400).send({ signup: false, errorCode: error.code, msg: 'missing params' });
-        }
-        return res.sendStatus(500);
-    }
-});
-
-router.put('/update', async (req, res) => {
+router.put('/update', async (req, res, next) => {
     try {
         const result = await userService.update(req.body);
         if (!result.affectedRows) {
@@ -70,14 +61,13 @@ router.put('/update', async (req, res) => {
         }
         return res.status(200).send({ updated: true, msg: 'password changed' });
     } catch (error) {
-        if (error.code === 'ER_NOT_PARAM') {
-            return res.status(400).send({ updated: false, errorCode: error.code, msg: 'missing params' });
-        }
-        return res.sendStatus(500);
+        error.action = 'update';
+        res.locals.error = error;
+        return next();
     }
 });
 
-router.delete('/delete', async (req, res) => {
+router.delete('/delete', async (req, res, next) => {
     try {
         const result = await userService.remove(req.body);
         if (!result.affectedRows) {
@@ -85,10 +75,9 @@ router.delete('/delete', async (req, res) => {
         }
         return res.status(200).send({ deleted: false, msg: 'user eliminated succesfully' });
     } catch (error) {
-        if (error.code === 'ER_NOT_PARAM') {
-            return res.status(400).send({ deleted: false, errorCode: error.code, msg: 'missing params' });
-        }
-        return res.sendStatus(500);
+        error.action = 'delete';
+        res.locals.error = error;
+        return next();
     }
 });
 
