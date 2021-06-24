@@ -2,36 +2,6 @@ const mySQLDB = require('../mysql.db');
 const { checkParams, checkID } = require('../utils/checkers');
 const { checkValidDateTime, formatDateTimeToMySQL, checkValidDay, formatDateTimeToUser } = require('../utils/datetime');
 
-function getAll() {
-    return new Promise((resolve, reject) => {
-        const query = 'SELECT id, name, surname, email, password, role FROM user WHERE role = "client" AND active <> 0';
-        const db = mySQLDB();
-        db.query(query, (error, result) => {
-            db.end();
-            if (error) {
-                return reject(error);
-            }
-            return resolve(result);
-        });
-    });
-}
-
-function get({ email, password }) {
-    checkParams(email, password);
-    return new Promise((resolve, reject) => {
-        const query = 'SELECT id, name, surname, email, password, role FROM user WHERE email = ? AND password = ? AND role = "client" AND active <> 0';
-        const values = [email, password];
-        const db = mySQLDB();
-        db.query(query, values, (error, result) => {
-            db.end();
-            if (error) {
-                return reject(error);
-            }
-            return resolve((!result[0]) ? {} : result[0]);
-        });
-    });
-}
-
 function getAllVisits() {
     return new Promise((resolve, reject) => {
         const query = 'SELECT clientId, visitDay, visitDateTime FROM client_visit';
@@ -110,8 +80,6 @@ function removeVisit({ clientId, visitDay, visitDateTime }) {
 }
 
 module.exports = {
-    getAll,
-    get,
     getAllVisits,
     getClientVisits,
     addVisit,

@@ -2,36 +2,6 @@ const mySQLDB = require('../mysql.db');
 const { checkID, checkParams } = require('../utils/checkers');
 const { checkValidDay, checkValidTime } = require('../utils/datetime');
 
-function getAll() {
-    return new Promise((resolve, reject) => {
-        const query = 'SELECT id, name, surname, email, password, role FROM user WHERE role = "professor" AND active <> 0';
-        const db = mySQLDB();
-        db.query(query, (error, result) => {
-            db.end();
-            if (error) {
-                return reject(error);
-            }
-            return resolve(result);
-        });
-    });
-}
-
-function get({ email, password }) {
-    checkParams(email, password);
-    return new Promise((resolve, reject) => {
-        const query = 'SELECT id, name, surname, email, password, role FROM user WHERE email = ? AND password = ? AND role = "professor" AND active <> 0';
-        const values = [email, password];
-        const db = mySQLDB();
-        db.query(query, values, (error, result) => {
-            db.end();
-            if (error) {
-                return reject(error);
-            }
-            return resolve((!result[0]) ? {} : result[0]);
-        });
-    });
-}
-
 function getSchedules() {
     return new Promise((resolve, reject) => {
         const query = 'SELECT ps.professorId, p.name, p.surname, ps.day, ps.startHour, ps.finishHour FROM professor_schedule AS ps JOIN user AS p ON ps.professorId = p.id';
@@ -102,8 +72,6 @@ function removeSchedule({ professorId, day, startHour, finishHour }) {
 }
 
 module.exports = {
-    getAll,
-    get,
     getSchedules,
     getSchedule,
     addSchedule,
