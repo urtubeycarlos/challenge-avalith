@@ -49,10 +49,23 @@ describe('Testing userService', () => {
             assert.strictEqual(result.length, 3);
         });
 
+        it('getAll with role', async () => {
+            const result = await userService.getAll('client');
+            assert.strictEqual(result.length, 1);
+        });
+
+        it('getAll with multiple roles', async () => {
+            const result = await userService.getAll('client', 'professor');
+            assert.strictEqual(result.length, 2);
+        });
+
         it('get', async () => {
             const result = await userService.get(fakeUsers[0]);
             assert.strictEqual(result.email, fakeUsers[0].email);
             assert.strictEqual(result.password, md5(fakeUsers[0].password));
+            const resultById = await userService.get({ id: result.id });
+            assert.strictEqual(resultById.email, result.email);
+            assert.strictEqual(resultById.password, result.password);
         });
 
         it('remove', async () => {
