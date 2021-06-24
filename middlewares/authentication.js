@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-function checkToken(req, res, next) {
+function decodeToken(req, res, next) {
     const token = req.headers.authorization;
     if (token) {
         return jwt.verify(token, process.env.TOKEN_KEY, (error, decoded) => {
@@ -12,7 +12,7 @@ function checkToken(req, res, next) {
     return next();
 }
 
-function checkRole(...rolesRequired) {
+function checkAuthorization(...rolesRequired) {
     if (!rolesRequired || !rolesRequired.length) {
         const error = 'rolesRequired cant be null or undefined or empty';
         error.code = 'ER_NOT_ROLE';
@@ -40,7 +40,7 @@ function checkIDs(req, res, next) {
 }
 
 module.exports = {
-    checkToken,
-    checkRole,
+    decodeToken,
+    checkAuthorization,
     checkIDs,
 };
