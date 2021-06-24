@@ -2,8 +2,8 @@ const { describe, it } = require('mocha');
 const { beforeEach, afterEach } = require('mocha');
 const { assert } = require('chai');
 const sinon = require('sinon');
-const { createToken } = require('../../services/userService');
-const { checkToken, checkRole } = require('../../middlewares/authentication');
+const { createToken } = require('../../utils/authentication');
+const { decodeToken, checkAuthorization } = require('../../middlewares/authentication');
 
 function sleep(milliseconds) {
     return new Promise((resolve) => {
@@ -42,50 +42,52 @@ describe('Testing authentication middleware', () => {
         next.resetHistory();
     });
 
-    describe('checkToken', () => {
+    describe('decodeToken', () => {
         it('null token', () => {
             req.headers.authorization = null;
-            checkToken(req, res, next);
-            assert.isTrue(res.sendStatus.calledOnceWith(401));
+            decodeToken(req, res, next);
+            assert.isTrue(next.calledOnce);
         });
 
         it('invalid token', () => {
             req.headers.authorization = 'fsafsalkj';
-            checkToken(req, res, next);
-            assert.isTrue(res.sendStatus.calledOnceWith(401));
+            decodeToken(req, res, next);
+            assert.isTrue(next.calledOnce);
+            assert.isUndefined(req.token);
         });
 
         it('valid token', () => {
-            checkToken(req, res, next);
+            decodeToken(req, res, next);
             assert.isTrue(next.calledOnce);
         });
 
         it('expired token', async () => {
-            checkToken(req, res, next);
+            decodeToken(req, res, next);
             assert.isTrue(next.calledOnce);
             await sleep(1000);
-            checkToken(req, res, next);
-            assert.isTrue(res.sendStatus.calledOnceWith(401));
+            decodeToken(req, res, next);
+            assert.isTrue(next.calledTwice);
+            assert.isUndefined(req.token);
         });
     });
 
-    describe('checkRole', () => {
+    describe('checkAuthorization', () => {
         it('null or undefined roles to check', () => {
             try {
-                checkRole(null);
+                checkAuthorization(null);
             } catch (error) {
                 assert.strictEqual(error.code, 'ER_NOT_ROLE');
             }
         });
 
         it('valid role', () => {
-            const fn = checkRole('client');
+            const fn = checkAuthorization('client');
             fn(req, res, next);
             assert.isTrue(next.calledOnce);
         });
 
         it('invalid role', () => {
-            const fn = checkRole('admin');
+            const fn = checkAuthorization('admin');
             fn(req, res, next);
             assert.isTrue(res.sendStatus.calledOnceWith(401));
         });
