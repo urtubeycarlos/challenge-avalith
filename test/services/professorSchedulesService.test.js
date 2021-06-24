@@ -2,7 +2,7 @@ const { describe, it } = require('mocha');
 const { beforeEach, afterEach } = require('mocha');
 const { assert } = require('chai');
 const userService = require('../../services/userService');
-const professorService = require('../../services/professorService');
+const professorSchedulesService = require('../../services/professorSchedulesService');
 
 describe('Testing professor service', () => {
     const fakeProfessors = [
@@ -33,13 +33,13 @@ describe('Testing professor service', () => {
             const professor = fakeProfessors[i];
             await userService.insert(professor);
         }
-        const all = await professorService.getAll();
+        const all = await userService.getAll('professor');
         for (let i = 0; i < all.length; i += 1) {
             const professor = all[i];
             for (let j = 0; j < fakeSchedules.length; j += 1) {
                 const schedule = fakeSchedules[j];
                 schedule.professorId = professor.id;
-                await professorService.addSchedule(schedule);
+                await professorSchedulesService.addSchedule(schedule);
             }
         }
     });
@@ -49,40 +49,28 @@ describe('Testing professor service', () => {
             const professor = fakeProfessors[i];
             await userService.remove(professor);
         }
-        const schedules = await professorService.getSchedules();
+        const schedules = await professorSchedulesService.getSchedules();
         for (let i = 0; i < schedules.length; i += 1) {
             const schedule = schedules[i];
-            await professorService.removeSchedule(schedule);
+            await professorSchedulesService.removeSchedule(schedule);
         }
     });
 
     describe('main methods', () => {
-        it('getAll', async () => {
-            const result = await professorService.getAll();
-            assert.strictEqual(result.length, 1);
-        });
-
-        it('get', async () => {
-            const all = await professorService.getAll();
-            const one = all[all.length - 1];
-            const result = await professorService.get(one);
-            assert.deepEqual(result, one);
-        });
-
         it('getSchedules', async () => {
-            const all = await professorService.getSchedules();
+            const all = await professorSchedulesService.getSchedules();
             assert.strictEqual(all.length, 2);
         });
 
         it('getSchedule', async () => {
-            const allProfessors = await professorService.getAll();
+            const allProfessors = await userService.getAll('professor');
             const professor = allProfessors[allProfessors.length - 1];
-            const result = await professorService.getSchedule(professor.id);
+            const result = await professorSchedulesService.getSchedule(professor.id);
             assert.strictEqual(result.length, 2);
         });
 
         it('addSchedule', async () => {
-            const allProfessors = await professorService.getAll();
+            const allProfessors = await userService.getAll('professor');
             const professor = allProfessors[allProfessors.length - 1];
             const newSchedule = {
                 professorId: professor.id,
@@ -90,77 +78,31 @@ describe('Testing professor service', () => {
                 startHour: '17:30:00',
                 finishHour: '19:00:00',
             };
-            await professorService.addSchedule(newSchedule);
-            const result = await professorService.getSchedule(professor.id);
+            await professorSchedulesService.addSchedule(newSchedule);
+            const result = await professorSchedulesService.getSchedule(professor.id);
             assert.strictEqual(result.length, 3);
         });
 
         it('removeSchedule', async () => {
             const oneSchedule = fakeSchedules[0];
-            const allProfessors = await professorService.getAll();
+            const allProfessors = await userService.getAll('professor');
             const professor = allProfessors[allProfessors.length - 1];
             oneSchedule.professorId = professor.id;
-            await professorService.removeSchedule(oneSchedule);
-            const result = await professorService.getSchedule(professor.id);
+            await professorSchedulesService.removeSchedule(oneSchedule);
+            const result = await professorSchedulesService.getSchedule(professor.id);
             assert.strictEqual(result.length, 1);
         });
     });
 
     describe('border cases', () => {
-        describe('getAll', () => {
-            it('empty result', async () => {
-                for (let i = 0; i < fakeProfessors.length; i += 1) {
-                    const professor = fakeProfessors[i];
-                    await userService.remove(professor);
-                }
-                const allProfessors = await professorService.getAll();
-                assert.strictEqual(allProfessors.length, 0);
-            });
-        });
-
-        describe('get', () => {
-            it('null or undefined param', async () => {
-                try {
-                    await professorService.get(null);
-                } catch (error) {
-                    assert.isTrue(error instanceof TypeError);
-                }
-            });
-
-            it('undefined or null values', async () => {
-                try {
-                    await professorService.get({ email: null, password: undefined });
-                } catch (error) {
-                    assert.strictEqual(error.code, 'ER_NOT_PARAM');
-                }
-            });
-
-            it('empty param', async () => {
-                try {
-                    await professorService.get({});
-                } catch (error) {
-                    assert.strictEqual(error.code, 'ER_NOT_PARAM');
-                }
-            });
-
-            it('professor not exists', async () => {
-                const inexistentProfessor = {
-                    email: 'erik@coldmail.com',
-                    password: '5678',
-                };
-                const result = await userService.get(inexistentProfessor);
-                assert.deepEqual(result, {});
-            });
-        });
-
         describe('getSchedules', () => {
             it('empty result', async () => {
-                let schedules = await professorService.getSchedules();
+                let schedules = await professorSchedulesService.getSchedules();
                 for (let i = 0; i < schedules.length; i += 1) {
                     const schedule = schedules[i];
-                    await professorService.removeSchedule(schedule);
+                    await professorSchedulesService.removeSchedule(schedule);
                 }
-                schedules = await professorService.getSchedules();
+                schedules = await professorSchedulesService.getSchedules();
                 assert.strictEqual(schedules.length, 0);
             });
         });
@@ -168,7 +110,7 @@ describe('Testing professor service', () => {
         describe('getSchedule', () => {
             it('null or undefined id', async () => {
                 try {
-                    await professorService.getSchedule(null);
+                    await professorSchedulesService.getSchedule(null);
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_NOT_ID');
                 }
@@ -176,16 +118,16 @@ describe('Testing professor service', () => {
 
             it('id not integer', async () => {
                 try {
-                    await professorService.getSchedule('something');
+                    await professorSchedulesService.getSchedule('something');
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_ID_NOT_INT');
                 }
             });
 
             it('professor not exists', async () => {
-                const allProfessors = await professorService.getAll();
+                const allProfessors = await userService.getAll('professor');
                 const professor = allProfessors[allProfessors.length - 1];
-                const result = await professorService.getSchedule(professor.id + 1);
+                const result = await professorSchedulesService.getSchedule(professor.id + 1);
                 assert.strictEqual(result.length, 0);
             });
         });
@@ -193,7 +135,7 @@ describe('Testing professor service', () => {
         describe('addSchedule', () => {
             it('null or undefined param', async () => {
                 try {
-                    await professorService.addSchedule(null);
+                    await professorSchedulesService.addSchedule(null);
                 } catch (error) {
                     assert.isTrue(error instanceof TypeError);
                 }
@@ -207,7 +149,7 @@ describe('Testing professor service', () => {
                         startHour: null,
                         finishHour: null,
                     };
-                    await professorService.addSchedule(badSchedule);
+                    await professorSchedulesService.addSchedule(badSchedule);
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_NOT_PARAM');
                 }
@@ -215,15 +157,15 @@ describe('Testing professor service', () => {
 
             it('empty param', async () => {
                 try {
-                    await professorService.get({});
+                    await professorSchedulesService.addSchedule({});
                 } catch (error) {
-                    assert.strictEqual(error.code, 'ER_NOT_PARAM');
+                    assert.strictEqual(error.code, 'ER_NOT_ID');
                 }
             });
 
             it('null or undefined id', async () => {
                 try {
-                    await professorService.addSchedule({ professorId: null });
+                    await professorSchedulesService.addSchedule({ professorId: null });
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_NOT_ID');
                 }
@@ -231,7 +173,7 @@ describe('Testing professor service', () => {
 
             it('id not integer', async () => {
                 try {
-                    await professorService.addSchedule({ professorId: 'something' });
+                    await professorSchedulesService.addSchedule({ professorId: 'something' });
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_ID_NOT_INT');
                 }
@@ -245,7 +187,7 @@ describe('Testing professor service', () => {
                         startHour: '17:30:00',
                         finishHour: '19:00:00',
                     };
-                    await professorService.addSchedule(badSchedule);
+                    await professorSchedulesService.addSchedule(badSchedule);
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_BAD_DAY');
                 }
@@ -259,7 +201,7 @@ describe('Testing professor service', () => {
                         startHour: '177:30:00',
                         finishHour: '199:00:00',
                     };
-                    professorService.addSchedule(badSchedule);
+                    professorSchedulesService.addSchedule(badSchedule);
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_BAD_TIME');
                 }
@@ -271,7 +213,7 @@ describe('Testing professor service', () => {
                         startHour: '17-30-00',
                         finishHour: '19-00-00',
                     };
-                    professorService.addSchedule(badSchedule);
+                    professorSchedulesService.addSchedule(badSchedule);
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_BAD_TIME');
                 }
@@ -281,7 +223,7 @@ describe('Testing professor service', () => {
         describe('removeSchedule', () => {
             it('null or undefined param', async () => {
                 try {
-                    await professorService.removeSchedule(null);
+                    await professorSchedulesService.removeSchedule(null);
                 } catch (error) {
                     assert.isTrue(error instanceof TypeError);
                 }
@@ -295,7 +237,7 @@ describe('Testing professor service', () => {
                         startHour: null,
                         finishHour: null,
                     };
-                    await professorService.removeSchedule(badSchedule);
+                    await professorSchedulesService.removeSchedule(badSchedule);
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_NOT_PARAM');
                 }
@@ -303,7 +245,7 @@ describe('Testing professor service', () => {
 
             it('empty param', async () => {
                 try {
-                    await professorService.removeSchedule({});
+                    await professorSchedulesService.removeSchedule({});
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_NOT_ID');
                 }
@@ -311,7 +253,7 @@ describe('Testing professor service', () => {
 
             it('null or undefined id', async () => {
                 try {
-                    await professorService.removeSchedule({ professorId: null });
+                    await professorSchedulesService.removeSchedule({ professorId: null });
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_NOT_ID');
                 }
@@ -319,7 +261,7 @@ describe('Testing professor service', () => {
 
             it('id not integer', async () => {
                 try {
-                    await professorService.removeSchedule({ professorId: 'something' });
+                    await professorSchedulesService.removeSchedule({ professorId: 'something' });
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_ID_NOT_INT');
                 }
@@ -333,7 +275,7 @@ describe('Testing professor service', () => {
                         startHour: '17:30:00',
                         finishHour: '19:00:00',
                     };
-                    await professorService.removeSchedule(badSchedule);
+                    await professorSchedulesService.removeSchedule(badSchedule);
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_BAD_DAY');
                 }
@@ -347,7 +289,7 @@ describe('Testing professor service', () => {
                         startHour: '177:30:00',
                         finishHour: '199:00:00',
                     };
-                    professorService.removeSchedule(badSchedule);
+                    professorSchedulesService.removeSchedule(badSchedule);
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_BAD_TIME');
                 }
@@ -359,14 +301,14 @@ describe('Testing professor service', () => {
                         startHour: '17-30-00',
                         finishHour: '19-00-00',
                     };
-                    professorService.removeSchedule(badSchedule);
+                    professorSchedulesService.removeSchedule(badSchedule);
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_BAD_TIME');
                 }
             });
 
             it('schedule not exists', async () => {
-                const allProfessors = await professorService.getAll();
+                const allProfessors = await userService.getAll('professor');
                 const professor = allProfessors[allProfessors.length - 1];
                 const inexistentSchedule = {
                     professorId: professor.id,
@@ -374,7 +316,7 @@ describe('Testing professor service', () => {
                     startHour: '14:30:00',
                     finishHour: '17:45:00',
                 };
-                const result = await professorService.removeSchedule(inexistentSchedule);
+                const result = await professorSchedulesService.removeSchedule(inexistentSchedule);
                 assert.strictEqual(result.affectedRows, 0);
             });
         });
