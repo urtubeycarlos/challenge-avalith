@@ -1,12 +1,12 @@
 const express = require('express');
 const userService = require('../services/userService');
 const { createToken } = require('../utils/authentication');
-const { checkToken, checkRole, checkIDs } = require('../middlewares/authentication');
+const { checkAuthorization, checkIDs } = require('../middlewares/authentication');
 
 const router = express.Router();
 const roles = ['client', 'professor', 'admin'];
 
-router.get('/all', checkToken, checkRole('admin'), async (req, res) => {
+router.get('/all', checkAuthorization('admin'), async (req, res) => {
     try {
         const result = await userService.getAll();
         return res.status(200).send(result);
@@ -15,7 +15,7 @@ router.get('/all', checkToken, checkRole('admin'), async (req, res) => {
     }
 });
 
-router.get('/client', checkToken, checkRole('professor', 'admin'), async (req, res) => {
+router.get('/client', checkAuthorization('professor', 'admin'), async (req, res) => {
     try {
         const result = await userService.getAll('client');
         return res.status(200).send(result);
@@ -24,7 +24,7 @@ router.get('/client', checkToken, checkRole('professor', 'admin'), async (req, r
     }
 });
 
-router.get('/professor/:id', checkToken, checkRole('professor', 'admin'), checkIDs, async (req, res, next) => {
+router.get('/professor/:id', checkAuthorization('professor', 'admin'), checkIDs, async (req, res, next) => {
     try {
         const result = await userService.get({ id: req.params.id });
         return res.status(200).send(result);
@@ -67,7 +67,7 @@ router.post('/signup', async (req, res, next) => {
     }
 });
 
-router.post('/signup_admin', checkToken, checkRole('admin'), async (req, res, next) => {
+router.post('/signup_admin', checkAuthorization('admin'), async (req, res, next) => {
     const validRole = roles.indexOf(req.body.role); // buscamos si se encuentra el rol en el array
     if (validRole === -1) { // -1 si no se encontró...
         return res.status(400).send({ signup: false, errorCode: 'ER_BAD_ROLE' });
