@@ -30,7 +30,6 @@ function getAll(...roles) {
 }
 
 function get({ id, email, password }) {
-    checkParams(email, password);
     return new Promise((resolve, reject) => {
         let query;
         let values;
@@ -38,6 +37,7 @@ function get({ id, email, password }) {
             query = 'SELECT id, name, surname, email, password, role FROM user WHERE id = ? AND active <> 0';
             values = [id];
         } else {
+            checkParams(email, password);
             query = 'SELECT id, name, surname, email, password, role FROM user WHERE email = ? AND password = ? AND active <> 0';
             values = [email, md5(password)];
         }
