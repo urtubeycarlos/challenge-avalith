@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer');
 const sinon = require('sinon');
 const { sendMail } = require('../../services/emailService');
 
-describe.only('Testing email service', async () => {
+describe('Testing email service', async () => {
     const fakeEmail = {
         subject: 'subject',
         content: 'content',
@@ -45,7 +45,7 @@ describe.only('Testing email service', async () => {
                 text: 'content',
             };
             assert.deepEqual(result, expectedResult);
-        }).timeout(10000);
+        });
     });
 
     describe('border cases', () => {
