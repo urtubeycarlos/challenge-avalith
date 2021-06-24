@@ -5,7 +5,7 @@ const equipmentRouter = require('./routes/gymEquipment');
 const professorRouter = require('./routes/professor');
 const clientRouter = require('./routes/client');
 const diffusionRouter = require('./routes/diffusion');
-const { checkToken } = require('./middlewares/authentication');
+const { decodeToken } = require('./middlewares/authentication');
 const { resolveError } = require('./middlewares/errorHandling');
 require('dotenv').config();
 
@@ -13,8 +13,8 @@ const app = express();
 
 app.use(express.json());
 
+app.use(decodeToken);
 app.use('/user', userRouter);
-app.use(checkToken);
 app.use('/routine', routineRouter);
 app.use('/equipment', equipmentRouter);
 app.use('/professor', professorRouter);
