@@ -5,14 +5,11 @@ function checkToken(req, res, next) {
     const token = req.headers.authorization;
     if (token) {
         return jwt.verify(token, process.env.TOKEN_KEY, (error, decoded) => {
-            if (error) {
-                return res.sendStatus(401);
-            }
             req.token = decoded;
             return next();
         });
     }
-    return res.sendStatus(401);
+    return next();
 }
 
 function checkRole(...rolesRequired) {
@@ -22,9 +19,11 @@ function checkRole(...rolesRequired) {
         throw error;
     }
     return (req, res, next) => {
-        const isValid = rolesRequired.includes(req.token.role);
-        if (isValid) {
-            return next();
+        if (req.token) {
+            const isValid = rolesRequired.includes(req.token.role);
+            if (isValid) {
+                return next();
+            }
         }
         return res.sendStatus(401);
     };
