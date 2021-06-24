@@ -10,8 +10,8 @@ function getAll(...roles) {
             roleQuery = ' AND (';
             for (let i = 0; i < roles.length; i += 1) {
                 const role = roles[i];
-                roleQuery += `role = ${role}`;
-                if (i !== roles.length) {
+                roleQuery += `role = '${role}'`;
+                if (i !== roles.length - 1) {
                     roleQuery += ' OR ';
                 }
             }
