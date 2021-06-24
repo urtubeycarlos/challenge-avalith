@@ -1,11 +1,11 @@
 const express = require('express');
-const { checkRole } = require('../middlewares/authentication');
+const { checkAuthorization } = require('../middlewares/authentication');
 const emailService = require('../services/emailService');
 const clientService = require('../services/clientService');
 
 const router = express.Router();
 
-router.post('/', checkRole('admin'), async (req, res) => {
+router.post('/', checkAuthorization('admin'), async (req, res) => {
     let clients;
     try {
         clients = await clientService.getAll();

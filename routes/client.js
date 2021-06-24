@@ -1,10 +1,10 @@
 const express = require('express');
 const clientService = require('../services/clientService');
-const { checkRole } = require('../middlewares/authentication');
+const { checkAuthorization } = require('../middlewares/authentication');
 
 const router = express.Router();
 
-router.get('/', checkRole('admin'), async (req, res) => {
+router.get('/', checkAuthorization('admin'), async (req, res) => {
     try {
         const result = await clientService.getAll();
         return res.status(200).send(result);
@@ -13,7 +13,7 @@ router.get('/', checkRole('admin'), async (req, res) => {
     }
 });
 
-router.get('/:id', checkRole('admin'), async (req, res) => {
+router.get('/:id', checkAuthorization('admin'), async (req, res) => {
     try {
         const result = await clientService.get(req.params.id);
         return res.status(200).send(result);
@@ -28,7 +28,7 @@ router.get('/:id', checkRole('admin'), async (req, res) => {
     }
 });
 
-router.get('/visits', checkRole('professor', 'admin'), async (req, res) => {
+router.get('/visits', checkAuthorization('professor', 'admin'), async (req, res) => {
     try {
         const result = await clientService.getAllVisits();
         return res.status(200).send(result);
@@ -37,7 +37,7 @@ router.get('/visits', checkRole('professor', 'admin'), async (req, res) => {
     }
 });
 
-router.get('/visits/:id', checkRole('professor', 'admin'), async (req, res) => {
+router.get('/visits/:id', checkAuthorization('professor', 'admin'), async (req, res) => {
     try {
         const result = await clientService.getClientVisits(req.params.id);
         return res.status(200).send(result);
@@ -52,7 +52,7 @@ router.get('/visits/:id', checkRole('professor', 'admin'), async (req, res) => {
     }
 });
 
-router.post('/visits', checkRole('professor', 'admin'), async (req, res) => {
+router.post('/visits', checkAuthorization('professor', 'admin'), async (req, res) => {
     try {
         await clientService.addVisit(req.body);
         return res.status(200).send({ added: true, msg: 'visit added successfully' });

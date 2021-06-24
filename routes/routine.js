@@ -1,6 +1,6 @@
 const express = require('express');
 const routineService = require('../services/routineService');
-const { checkRole } = require('../middlewares/authentication');
+const { checkAuthorization } = require('../middlewares/authentication');
 
 const router = express.Router();
 
@@ -28,7 +28,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/', checkRole('professor', 'admin'), async (req, res) => {
+router.post('/', checkAuthorization('professor', 'admin'), async (req, res) => {
     try {
         await routineService.insert(req.body);
         return res.status(200).send({ inserted: true, msg: 'routine added successfully' });
@@ -46,7 +46,7 @@ router.post('/', checkRole('professor', 'admin'), async (req, res) => {
     }
 });
 
-router.put('/', checkRole('professor', 'admin'), async (req, res) => {
+router.put('/', checkAuthorization('professor', 'admin'), async (req, res) => {
     try {
         await routineService.update(req.body);
         return res.status(200).send({ updated: true, msg: 'routine updated successfully' });
@@ -61,7 +61,7 @@ router.put('/', checkRole('professor', 'admin'), async (req, res) => {
     }
 });
 
-router.delete('/:id', checkRole('professor', 'admin'), async (req, res) => {
+router.delete('/:id', checkAuthorization('professor', 'admin'), async (req, res) => {
     try {
         const result = await routineService.remove(req.params.id);
         if (!result.result.n) {
