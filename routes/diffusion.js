@@ -1,28 +1,29 @@
 const express = require('express');
 const { checkAuthorization } = require('../middlewares/authentication');
 const emailService = require('../services/emailService');
-const clientService = require('../services/clientService');
+const userService = require('../services/userService');
 
 const router = express.Router();
 
-router.post('/', checkAuthorization('admin'), async (req, res) => {
+router.post('/', checkAuthorization('admin'), async (req, res, next) => {
     let clients;
     try {
-        clients = await clientService.getAll();
+        clients = await userService.getAll('client');
         clients = clients.map((client) => client.email);
         req.body.recipients = clients;
     } catch (error) {
-        return res.sendStatus(500);
+        error.action = 'send email';
+        res.locals.error = error;
+        return next();
     }
 
     try {
         const result = await emailService.sendMail(req.body);
         return res.send(result);
     } catch (error) {
-        if (error.code === 'ER_NOT_PARAM') {
-            return res.status(400).send({ error: error.code, msg: 'missing param' });
-        }
-        return res.sendStatus(500);
+        error.action = 'send email';
+        res.locals.error = error;
+        return next();
     }
 });
 
