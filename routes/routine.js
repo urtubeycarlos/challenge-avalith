@@ -4,64 +4,51 @@ const { checkAuthorization } = require('../middlewares/authentication');
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
     try {
         const result = await routineService.getAll();
         return res.status(200).send(result);
     } catch (error) {
-        return res.sendStatus(500);
+        error.action = 'get';
+        res.locals.error = error;
+        return next();
     }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
     try {
         const result = await routineService.get(req.params.id);
         return res.status(200).send(result);
     } catch (error) {
-        if (error.code === 'ER_NOT_ID') {
-            return res.status(400).send({ errorCode: error.code, msg: 'Id must be provided' });
-        }
-        if (error.code === 'ER_ID_NOT_INT') {
-            return res.status(400).send({ errorCode: error.code, msg: 'Id must be an integer' });
-        }
-        return res.sendStatus(500);
+        error.action = 'get';
+        res.locals.error = error;
+        return next();
     }
 });
 
-router.post('/', checkAuthorization('professor', 'admin'), async (req, res) => {
+router.post('/', checkAuthorization('professor', 'admin'), async (req, res, next) => {
     try {
         await routineService.insert(req.body);
-        return res.status(200).send({ inserted: true, msg: 'routine added successfully' });
+        return res.status(200).send({ added: true, msg: 'routine added successfully' });
     } catch (error) {
-        if (error.code === 'ER_NOT_ID') {
-            return res.status(400).send({ inserted: false, errorCode: error.code, msg: 'Id must be provided' });
-        }
-        if (error.code === 'ER_ID_NOT_INT') {
-            return res.status(400).send({ inserted: false, errorCode: error.code, msg: 'Id must be an integer' });
-        }
-        if (error.code === 'ER_DUP_ENTRY') {
-            return res.status(400).send({ inserted: false, errorCode: error.code, msg: 'duplicated routine for client_id entry' });
-        }
-        return res.sendStatus(500);
+        error.action = 'added';
+        res.locals.error = error;
+        return next();
     }
 });
 
-router.put('/', checkAuthorization('professor', 'admin'), async (req, res) => {
+router.put('/', checkAuthorization('professor', 'admin'), async (req, res, next) => {
     try {
         await routineService.update(req.body);
         return res.status(200).send({ updated: true, msg: 'routine updated successfully' });
     } catch (error) {
-        if (error.code === 'ER_NOT_ID') {
-            return res.status(400).send({ updated: false, errorCode: error.code, msg: 'Id must be provided' });
-        }
-        if (error.code === 'ER_ID_NOT_INT') {
-            return res.status(400).send({ updated: false, errorCode: error.code, msg: 'Id must be an integer' });
-        }
-        return res.sendStatus(500);
+        error.action = 'updated';
+        res.locals.error = error;
+        return next();
     }
 });
 
-router.delete('/:id', checkAuthorization('professor', 'admin'), async (req, res) => {
+router.delete('/:id', checkAuthorization('professor', 'admin'), async (req, res, next) => {
     try {
         const result = await routineService.remove(req.params.id);
         if (!result.result.n) {
@@ -69,13 +56,9 @@ router.delete('/:id', checkAuthorization('professor', 'admin'), async (req, res)
         }
         return res.status(200).send({ deleted: true, msg: 'routine deleted successfully' });
     } catch (error) {
-        if (error.code === 'ER_NOT_ID') {
-            return res.status(400).send({ deleted: false, errorCode: error.code, msg: 'Id must be provided' });
-        }
-        if (error.code === 'ER_ID_NOT_INT') {
-            return res.status(400).send({ deleted: false, errorCode: error.code, msg: 'Id must be an integer' });
-        }
-        return res.sendStatus(500);
+        error.action = 'deleted';
+        res.locals.error = error;
+        return next();
     }
 });
 

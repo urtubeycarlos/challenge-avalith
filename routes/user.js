@@ -6,21 +6,25 @@ const { checkAuthorization, checkIDs } = require('../middlewares/authentication'
 const router = express.Router();
 const roles = ['client', 'professor', 'admin'];
 
-router.get('/all', checkAuthorization('admin'), async (req, res) => {
+router.get('/all', checkAuthorization('admin'), async (req, res, next) => {
     try {
         const result = await userService.getAll();
         return res.status(200).send(result);
     } catch (error) {
-        return res.sendStatus(500);
+        error.action = 'getAll';
+        res.locals.error = error;
+        return next();
     }
 });
 
-router.get('/client', checkAuthorization('professor', 'admin'), async (req, res) => {
+router.get('/client', checkAuthorization('professor', 'admin'), async (req, res, next) => {
     try {
         const result = await userService.getAll('client');
         return res.status(200).send(result);
     } catch (error) {
-        return res.sendStatus(500);
+        error.action = 'getClients';
+        res.locals.error = error;
+        return next();
     }
 });
 
@@ -29,7 +33,7 @@ router.get('/professor/:id', checkAuthorization('professor', 'admin'), checkIDs,
         const result = await userService.get({ id: req.params.id });
         return res.status(200).send(result);
     } catch (error) {
-        error.action = 'get';
+        error.action = 'getProfessor';
         res.locals.error = error;
         return next();
     }

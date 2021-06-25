@@ -4,70 +4,55 @@ const { checkAuthorization } = require('../middlewares/authentication');
 
 const router = express.Router();
 
-router.get('/', checkAuthorization('admin', 'professor'), async (req, res) => {
+router.get('/', checkAuthorization('admin', 'professor'), async (req, res, next) => {
     try {
         const result = await gymEquipmentService.getAll();
         return res.status(200).send(result);
     } catch (error) {
-        return res.sendStatus(500);
+        error.action = 'get';
+        res.locals.error = error;
+        return next();
     }
 });
 
-router.get('/:id', checkAuthorization('admin', 'professor'), async (req, res) => {
+router.get('/:id', checkAuthorization('admin', 'professor'), async (req, res, next) => {
     try {
         const result = await gymEquipmentService.get(req.params.id);
         return res.status(200).send(result);
     } catch (error) {
-        if (error.code === 'ER_NOT_ID') {
-            return res.status(400).send({ errorCode: error.code, msg: 'Id must be provided' });
-        }
-        if (error.code === 'ER_ID_NOT_INT') {
-            return res.status(400).send({ errorCode: error.code, msg: 'id must be an integer' });
-        }
-        return res.sendStatus(500);
+        error.action = 'get';
+        res.locals.error = error;
+        return next();
     }
 });
 
-router.post('/', checkAuthorization('admin'), async (req, res) => {
+router.post('/', checkAuthorization('admin'), async (req, res, next) => {
     try {
         await gymEquipmentService.insert(req.body);
-        return res.status(200).send({ inserted: true, msg: 'equipment added successfully' });
+        return res.status(200).send({ added: true, msg: 'equipment added successfully' });
     } catch (error) {
         if (error instanceof TypeError) {
-            return res.status(400).send({ inserted: false, errorCode: 'NULL_BODY', msg: 'body cant be null' });
+            error.code = 'NULL_BODY';
+            error.status = 400;
         }
-        if (error.code === 'ER_NOT_PARAM') {
-            return res.status(400).send({ inserted: false, errorCode: error.code, msg: 'missing params' });
-        }
-        if (error.code === 'ER_DUP_ENTRY') {
-            return res.status(400).send({ inserted: false, errorCode: error.code, msg: 'name must be unique' });
-        }
-        return res.sendStatus(500);
+        error.action = 'added';
+        res.locals.error = error;
+        return next();
     }
 });
 
-router.put('/:id', checkAuthorization('admin', 'professor'), async (req, res) => {
+router.put('/:id', checkAuthorization('admin', 'professor'), async (req, res, next) => {
     try {
         await gymEquipmentService.update(req.params.id, req.body.status);
         return res.status(200).send({ updated: true, msg: 'status updated succesfully' });
     } catch (error) {
-        if (error.code === 'ER_NOT_ID') {
-            return res.status(400).send({ errorCode: error.code, msg: 'Id must be provided' });
-        }
-        if (error.code === 'ER_ID_NOT_INT') {
-            return res.status(400).send({ errorCode: error.code, msg: 'id must be an integer' });
-        }
-        if (error.code === 'ER_NOT_PARAM') {
-            return res.status(400).send({ errorCode: error.code, updated: false, msg: 'field status not exists' });
-        }
-        if (error.code === 'ER_BAD_STATUS') {
-            return res.status(400).send({ errorCode: error.code, updated: false, msg: 'status must be 1 for "working" or 2 for "out of service"' });
-        }
-        return res.sendStatus(500);
+        error.action = 'updated';
+        res.locals.error = error;
+        return next();
     }
 });
 
-router.delete('/:id', checkAuthorization('admin'), async (req, res) => {
+router.delete('/:id', checkAuthorization('admin'), async (req, res, next) => {
     try {
         const result = await gymEquipmentService.remove(req.params.id);
         if (!result.affectedRows) {
@@ -75,13 +60,9 @@ router.delete('/:id', checkAuthorization('admin'), async (req, res) => {
         }
         return res.status(200).send({ deleted: true, msg: 'equipment deleted successfully' });
     } catch (error) {
-        if (error.code === 'ER_NOT_ID') {
-            return res.status(400).send({ errorCode: error.code, msg: 'Id must be provided' });
-        }
-        if (error.code === 'ER_ID_NOT_INT') {
-            return res.status(400).send({ errorCode: error.code, msg: 'id must be an integer' });
-        }
-        return res.sendStatus(500);
+        error.action = 'deleted';
+        res.locals.error = error;
+        return next();
     }
 });
 
