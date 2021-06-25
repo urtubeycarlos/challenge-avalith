@@ -1,12 +1,12 @@
 const express = require('express');
 const { checkAuthorization } = require('../middlewares/authentication');
-const professorService = require('../services/schedulesService');
+const schedulesService = require('../services/schedulesService');
 
 const router = express.Router();
 
 /* router.get('/', checkAuthorization('admin'), async (req, res) => {
     try {
-        const result = await professorService.getAll();
+        const result = await schedulesService.getAll();
         return res.status(200).send(result);
     } catch (error) {
         return res.sendStatus(500);
@@ -15,7 +15,7 @@ const router = express.Router();
 
 router.get('/:id', checkAuthorization('admin'), async (req, res) => {
     try {
-        const result = await professorService.get(req.params.id);
+        const result = await schedulesService.get(req.params.id);
         return res.status(200).send(result);
     } catch (error) {
         if (error.code === 'ER_NOT_ID') {
@@ -28,75 +28,47 @@ router.get('/:id', checkAuthorization('admin'), async (req, res) => {
     }
 }); */
 
-router.get('/', checkAuthorization('client', 'admin'), async (req, res) => {
+router.get('/', checkAuthorization('client', 'admin'), async (req, res, next) => {
     try {
-        const result = await professorService.getSchedules();
+        const result = await schedulesService.getSchedules();
         return res.status(200).send(result);
     } catch (error) {
-        return res.sendStatus(500);
+        error.action = 'get';
+        res.locals.error = error;
+        return next();
     }
 });
 
-router.get('/:id', checkAuthorization('client', 'admin'), async (req, res) => {
+router.get('/:id', checkAuthorization('client', 'admin'), async (req, res, next) => {
     try {
-        const result = await professorService.getSchedule(req.params.id);
+        const result = await schedulesService.getSchedule(req.params.id);
         return res.status(200).send(result);
     } catch (error) {
-        if (error.code === 'ER_NOT_ID') {
-            return res.status(400).send({ errorCode: error.code, msg: 'id cant be null' });
-        }
-        if (error.code === 'ER_ID_NOT_INT') {
-            return res.status(400).send({ errorCode: error.code, msg: 'id must be an integer' });
-        }
-        return res.sendStatus(500);
+        error.action = 'get';
+        res.locals.error = error;
+        return next();
     }
 });
 
-router.post('/', checkAuthorization('admin'), async (req, res) => {
+router.post('/', checkAuthorization('admin'), async (req, res, next) => {
     try {
-        await professorService.addSchedule(req.body);
+        await schedulesService.addSchedule(req.body);
         return res.status(200).send({ added: true, msg: 'schedule added successfully' });
     } catch (error) {
-        if (error.code === 'ER_NOT_ID') {
-            return res.status(400).send({ added: false, errorCode: error.code, msg: 'professorId cant be null' });
-        }
-        if (error.code === 'ER_ID_NOT_INT') {
-            return res.status(400).send({ added: false, errorCode: error.code, msg: 'professorId must be an integer' });
-        }
-        if (error.code === 'ER_NOT_PARAM') {
-            return res.status(400).send({ added: false, errorCode: error.code, msg: 'Missing param(s)' });
-        }
-        if (error.code === 'ER_BAD_DAY') {
-            return res.status(400).send({ added: false, errorCode: error.code, msg: 'day must be an integer between 1 and 7' });
-        }
-        if (error.code === 'ER_BAD_TIME') {
-            return res.status(400).send({ added: false, errorCode: error.code, msg: 'time must be formmated hh:mm:ss' });
-        }
-        return res.sendStatus(500);
+        error.action = 'added';
+        res.locals.error = error;
+        return next();
     }
 });
 
-router.delete('/', checkAuthorization('admin'), async (req, res) => {
+router.delete('/', checkAuthorization('admin'), async (req, res, next) => {
     try {
-        await professorService.removeSchedule(req.body);
+        await schedulesService.removeSchedule(req.body);
         return res.status(200).send({ deleted: true, msg: 'schedule deleted successfully' });
     } catch (error) {
-        if (error.code === 'ER_NOT_ID') {
-            return res.status(400).send({ added: false, errorCode: error.code, msg: 'professorId cant be null' });
-        }
-        if (error.code === 'ER_ID_NOT_INT') {
-            return res.status(400).send({ added: false, errorCode: error.code, msg: 'professorId must be an integer' });
-        }
-        if (error.code === 'ER_NOT_PARAM') {
-            return res.status(400).send({ added: false, errorCode: error.code, msg: 'Missing param(s)' });
-        }
-        if (error.code === 'ER_BAD_DAY') {
-            return res.status(400).send({ added: false, errorCode: error.code, msg: 'day must be an integer between 1 and 7' });
-        }
-        if (error.code === 'ER_BAD_TIME') {
-            return res.status(400).send({ added: false, errorCode: error.code, msg: 'time must be formmated hh:mm:ss' });
-        }
-        return res.sendStatus(500);
+        error.action = 'deleted';
+        res.locals.error = error;
+        return next();
     }
 });
 
