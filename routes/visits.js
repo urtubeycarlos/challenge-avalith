@@ -1,5 +1,5 @@
 const express = require('express');
-const clientVisitsService = require('../services/clientVisitsService');
+const clientVisitsService = require('../services/visitsService');
 const { checkAuthorization } = require('../middlewares/authentication');
 
 const router = express.Router();
