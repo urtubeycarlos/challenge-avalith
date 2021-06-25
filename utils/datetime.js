@@ -4,11 +4,13 @@ function checkValidDay(day) {
     if (!day) {
         const error = new Error('Not day');
         error.code = 'ER_NOT_DAY';
+        error.status = 400;
         throw error;
     }
     if (day < 1 || day > 7) {
         const error = new Error('Invalid day');
         error.code = 'ER_BAD_DAY';
+        error.status = 400;
         throw error;
     }
     return day;
@@ -18,6 +20,7 @@ function checkValidDate(date) {
     if (!date) {
         const error = new Error('Not date');
         error.code = 'ER_NOT_DATE';
+        error.status = 400;
         throw error;
     }
     const formats = ['DD/MM/YYYY', 'DD-MM-YYYY'];
@@ -25,6 +28,7 @@ function checkValidDate(date) {
     if (!valid) {
         const error = new Error('Invalid date');
         error.code = 'ER_BAD_DATE';
+        error.status = 400;
         throw error;
     }
     return valid;
@@ -34,6 +38,7 @@ function checkValidDateTime(dateTime) {
     if (!dateTime) {
         const error = new Error('Not datetime');
         error.code = 'ER_NOT_DATETIME';
+        error.status = 400;
         throw error;
     }
     const formats = ['DD/MM/YYYY HH:mm:ss', 'DD-MM-YYYY HH:mm:ss'];
@@ -41,6 +46,7 @@ function checkValidDateTime(dateTime) {
     if (!valid) {
         const error = new Error('Invalid datetime');
         error.code = 'ER_BAD_DATETIME';
+        error.status = 400;
         throw error;
     }
     return valid;
@@ -50,6 +56,7 @@ function checkValidTime(time) {
     if (!time) {
         const error = new Error('Not time');
         error.code = 'ER_NOT_TIME';
+        error.status = 400;
         throw error;
     }
     const format = 'HH:mm:ss';
@@ -57,6 +64,7 @@ function checkValidTime(time) {
     if (!valid) {
         const error = new Error('Invalid time');
         error.code = 'ER_BAD_TIME';
+        error.status = 400;
         throw error;
     }
     return valid;
@@ -80,6 +88,7 @@ function formatDateTimeToUser(dateTime) {
     if (!dateTime) {
         const error = new Error('Not datetime');
         error.code = 'ER_NOT_DATETIME';
+        error.status = 400;
         throw error;
     }
     const formats = ['YYYY-MM-DD HH:mm:ss'];
@@ -87,6 +96,7 @@ function formatDateTimeToUser(dateTime) {
     if (!valid) {
         const error = new Error('Invalid datetime');
         error.code = 'ER_BAD_DATETIME';
+        error.status = 400;
         throw error;
     }
     const momentDateTime = moment(dateTime, 'YYYY-MM-DD HH:mm:ss');
