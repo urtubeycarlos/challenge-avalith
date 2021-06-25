@@ -1,10 +1,10 @@
 const express = require('express');
 const { checkAuthorization } = require('../middlewares/authentication');
-const professorService = require('../services/professorService');
+const professorService = require('../services/professorSchedulesService');
 
 const router = express.Router();
 
-router.get('/', checkAuthorization('admin'), async (req, res) => {
+/* router.get('/', checkAuthorization('admin'), async (req, res) => {
     try {
         const result = await professorService.getAll();
         return res.status(200).send(result);
@@ -26,7 +26,7 @@ router.get('/:id', checkAuthorization('admin'), async (req, res) => {
         }
         return res.sendStatus(500);
     }
-});
+}); */
 
 router.get('/schedule', checkAuthorization('client', 'admin'), async (req, res) => {
     try {

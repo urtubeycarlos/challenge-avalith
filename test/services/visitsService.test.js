@@ -2,7 +2,7 @@ const { describe, it } = require('mocha');
 const { beforeEach, afterEach } = require('mocha');
 const { assert } = require('chai');
 const userService = require('../../services/userService');
-const clientVisitsService = require('../../services/clientVisitsService');
+const visitsService = require('../../services/visitsService');
 
 describe('Testing client service', () => {
     const fakeClients = [
@@ -37,7 +37,7 @@ describe('Testing client service', () => {
             for (let j = 0; j < fakeVisits.length; j += 1) {
                 const visit = fakeVisits[j];
                 visit.clientId = client.id;
-                await clientVisitsService.addVisit(visit);
+                await visitsService.addVisit(visit);
             }
         }
     });
@@ -47,23 +47,23 @@ describe('Testing client service', () => {
             const client = fakeClients[i];
             await userService.remove(client);
         }
-        const visits = await clientVisitsService.getAllVisits();
+        const visits = await visitsService.getAllVisits();
         for (let i = 0; i < visits.length; i += 1) {
             const visit = visits[i];
-            clientVisitsService.removeVisit(visit);
+            visitsService.removeVisit(visit);
         }
     });
 
     describe('main methods', () => {
         it('getAllVisits', async () => {
-            const allVisits = await clientVisitsService.getAllVisits();
+            const allVisits = await visitsService.getAllVisits();
             assert.strictEqual(allVisits.length, 2);
         });
 
         it('getClientVisits', async () => {
             const allClients = await userService.getAll('client');
             const client = allClients[allClients.length - 1];
-            const result = await clientVisitsService.getClientVisits(client.id);
+            const result = await visitsService.getClientVisits(client.id);
             assert.strictEqual(result.length, 2);
         });
 
@@ -75,8 +75,8 @@ describe('Testing client service', () => {
                 visitDay: 4,
                 visitDateTime: '08-06-2021 15:30:00',
             };
-            await clientVisitsService.addVisit(newVisit);
-            const result = await clientVisitsService.getAllVisits();
+            await visitsService.addVisit(newVisit);
+            const result = await visitsService.getAllVisits();
             assert.strictEqual(result.length, 3);
         });
 
@@ -85,8 +85,8 @@ describe('Testing client service', () => {
             const allClients = await userService.getAll('client');
             const client = allClients[allClients.length - 1];
             visit.clientId = client.id;
-            await clientVisitsService.removeVisit(visit);
-            const result = await clientVisitsService.getAllVisits();
+            await visitsService.removeVisit(visit);
+            const result = await visitsService.getAllVisits();
             assert.strictEqual(result.length, 1);
         });
     });
@@ -100,10 +100,10 @@ describe('Testing client service', () => {
                     for (let j = 0; j < fakeVisits.length; j += 1) {
                         const visit = fakeVisits[j];
                         visit.clientId = client.id;
-                        await clientVisitsService.removeVisit(visit);
+                        await visitsService.removeVisit(visit);
                     }
                 }
-                const result = await clientVisitsService.getAllVisits();
+                const result = await visitsService.getAllVisits();
                 assert.strictEqual(result.length, 0);
             });
         });
@@ -111,7 +111,7 @@ describe('Testing client service', () => {
         describe('getClientVisits', () => {
             it('null or undefined id', async () => {
                 try {
-                    await clientVisitsService.getClientVisits(null);
+                    await visitsService.getClientVisits(null);
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_NOT_ID');
                 }
@@ -119,7 +119,7 @@ describe('Testing client service', () => {
 
             it('not integer id', async () => {
                 try {
-                    await clientVisitsService.getClientVisits('something');
+                    await visitsService.getClientVisits('something');
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_ID_NOT_INT');
                 }
@@ -128,7 +128,7 @@ describe('Testing client service', () => {
             it('empty result and not existing client', async () => {
                 const clients = await userService.getAll('client');
                 const client = clients[clients.length - 1];
-                const result = await clientVisitsService.getClientVisits(client.id + 1);
+                const result = await visitsService.getClientVisits(client.id + 1);
                 assert.strictEqual(result.length, 0);
             });
         });
@@ -136,7 +136,7 @@ describe('Testing client service', () => {
         describe('addVisit', () => {
             it('null or undefined param', async () => {
                 try {
-                    await clientVisitsService.addVisit(null);
+                    await visitsService.addVisit(null);
                 } catch (error) {
                     assert.isTrue(error instanceof TypeError);
                 }
@@ -149,7 +149,7 @@ describe('Testing client service', () => {
                         visitDay: null,
                         visitDateTime: null,
                     };
-                    await clientVisitsService.addVisit(badVisit);
+                    await visitsService.addVisit(badVisit);
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_NOT_PARAM');
                 }
@@ -157,7 +157,7 @@ describe('Testing client service', () => {
 
             it('empty param', async () => {
                 try {
-                    await clientVisitsService.addVisit({});
+                    await visitsService.addVisit({});
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_NOT_ID');
                 }
@@ -165,7 +165,7 @@ describe('Testing client service', () => {
 
             it('null or undefined id', async () => {
                 try {
-                    await clientVisitsService.addVisit({ clientId: null });
+                    await visitsService.addVisit({ clientId: null });
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_NOT_ID');
                 }
@@ -173,7 +173,7 @@ describe('Testing client service', () => {
 
             it('id not integer', async () => {
                 try {
-                    await clientVisitsService.addVisit({ clientId: 'something' });
+                    await visitsService.addVisit({ clientId: 'something' });
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_ID_NOT_INT');
                 }
@@ -186,7 +186,7 @@ describe('Testing client service', () => {
                         visitDay: 9,
                         visitDateTime: '08-06-2021 15:30:00',
                     };
-                    await clientVisitsService.addVisit(badVisit);
+                    await visitsService.addVisit(badVisit);
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_BAD_DAY');
                 }
@@ -199,7 +199,7 @@ describe('Testing client service', () => {
                         visitDay: 6,
                         visitDateTime: '08-77-21 156:30:00',
                     };
-                    clientVisitsService.addVisit(badVisit);
+                    visitsService.addVisit(badVisit);
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_BAD_DATETIME');
                 }
@@ -210,7 +210,7 @@ describe('Testing client service', () => {
                         visitDay: 6,
                         visitDateTime: '08-06-2021 15-30-00',
                     };
-                    clientVisitsService.addVisit(badVisit);
+                    visitsService.addVisit(badVisit);
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_BAD_DATETIME');
                 }
@@ -220,7 +220,7 @@ describe('Testing client service', () => {
         describe('removeVisit', () => {
             it('null or undefined param', async () => {
                 try {
-                    await clientVisitsService.removeVisit(null);
+                    await visitsService.removeVisit(null);
                 } catch (error) {
                     assert.isTrue(error instanceof TypeError);
                 }
@@ -233,7 +233,7 @@ describe('Testing client service', () => {
                         visitDay: null,
                         visitDateTime: null,
                     };
-                    await clientVisitsService.removeVisit(badVisit);
+                    await visitsService.removeVisit(badVisit);
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_NOT_PARAM');
                 }
@@ -241,7 +241,7 @@ describe('Testing client service', () => {
 
             it('empty param', async () => {
                 try {
-                    await clientVisitsService.removeVisit({});
+                    await visitsService.removeVisit({});
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_NOT_ID');
                 }
@@ -249,7 +249,7 @@ describe('Testing client service', () => {
 
             it('null or undefined id', async () => {
                 try {
-                    await clientVisitsService.removeVisit({ clientId: null });
+                    await visitsService.removeVisit({ clientId: null });
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_NOT_ID');
                 }
@@ -257,7 +257,7 @@ describe('Testing client service', () => {
 
             it('id not integer', async () => {
                 try {
-                    await clientVisitsService.removeVisit({ clientId: 'something' });
+                    await visitsService.removeVisit({ clientId: 'something' });
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_ID_NOT_INT');
                 }
@@ -270,7 +270,7 @@ describe('Testing client service', () => {
                         visitDay: 9,
                         visitDateTime: '08-06-2021 15:30:00',
                     };
-                    await clientVisitsService.removeVisit(badVisit);
+                    await visitsService.removeVisit(badVisit);
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_BAD_DAY');
                 }
@@ -283,7 +283,7 @@ describe('Testing client service', () => {
                         visitDay: 6,
                         visitDateTime: '088-06-2021 155:30:00',
                     };
-                    clientVisitsService.removeVisit(badVisit);
+                    visitsService.removeVisit(badVisit);
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_BAD_DATETIME');
                 }
@@ -294,7 +294,7 @@ describe('Testing client service', () => {
                         visitDay: 6,
                         visitDateTime: '08-06-2021 15-30-00',
                     };
-                    clientVisitsService.removeVisit(badVisit);
+                    visitsService.removeVisit(badVisit);
                 } catch (error) {
                     assert.strictEqual(error.code, 'ER_BAD_DATETIME');
                 }
@@ -308,7 +308,7 @@ describe('Testing client service', () => {
                     visitDay: 3,
                     visitDateTime: '08-06-2021 15:30:00',
                 };
-                const result = await clientVisitsService.removeVisit(inexistentVisit);
+                const result = await visitsService.removeVisit(inexistentVisit);
                 assert.strictEqual(result.affectedRows, 0);
             });
         });
