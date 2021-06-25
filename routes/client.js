@@ -1,10 +1,10 @@
 const express = require('express');
-const clientService = require('../services/clientService');
+const clientVisitsService = require('../services/clientVisitsService');
 const { checkAuthorization } = require('../middlewares/authentication');
 
 const router = express.Router();
 
-router.get('/', checkAuthorization('admin'), async (req, res) => {
+/* router.get('/', checkAuthorization('admin'), async (req, res) => {
     try {
         const result = await clientService.getAll();
         return res.status(200).send(result);
@@ -26,20 +26,20 @@ router.get('/:id', checkAuthorization('admin'), async (req, res) => {
         }
         return res.sendStatus(500);
     }
-});
+}); */
 
-router.get('/visits', checkAuthorization('professor', 'admin'), async (req, res) => {
+router.get('/', checkAuthorization('professor', 'admin'), async (req, res) => {
     try {
-        const result = await clientService.getAllVisits();
+        const result = await clientVisitsService.getAllVisits();
         return res.status(200).send(result);
     } catch (error) {
         return res.sendStatus(500);
     }
 });
 
-router.get('/visits/:id', checkAuthorization('professor', 'admin'), async (req, res) => {
+router.get('/:id', checkAuthorization('professor', 'admin'), async (req, res, next) => {
     try {
-        const result = await clientService.getClientVisits(req.params.id);
+        const result = await clientVisitsService.getClientVisits(req.params.id);
         return res.status(200).send(result);
     } catch (error) {
         if (error.code === 'ER_NOT_ID') {
@@ -52,7 +52,7 @@ router.get('/visits/:id', checkAuthorization('professor', 'admin'), async (req, 
     }
 });
 
-router.post('/visits', checkAuthorization('professor', 'admin'), async (req, res) => {
+router.post('/', checkAuthorization('professor', 'admin'), async (req, res, next) => {
     try {
         await clientService.addVisit(req.body);
         return res.status(200).send({ added: true, msg: 'visit added successfully' });
