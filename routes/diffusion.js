@@ -12,7 +12,7 @@ router.post('/', checkAuthorization('admin'), async (req, res, next) => {
         clients = clients.map((client) => client.email);
         req.body.recipients = clients;
     } catch (error) {
-        error.action = 'send email';
+        error.action = 'sended';
         res.locals.error = error;
         return next();
     }
@@ -21,7 +21,7 @@ router.post('/', checkAuthorization('admin'), async (req, res, next) => {
         const result = await emailService.sendMail(req.body);
         return res.send(result);
     } catch (error) {
-        error.action = 'send email';
+        error.action = 'sended';
         res.locals.error = error;
         return next();
     }
