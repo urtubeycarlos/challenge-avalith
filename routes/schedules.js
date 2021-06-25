@@ -1,6 +1,6 @@
 const express = require('express');
 const { checkAuthorization } = require('../middlewares/authentication');
-const professorService = require('../services/professorSchedulesService');
+const professorService = require('../services/schedulesService');
 
 const router = express.Router();
 
@@ -28,7 +28,7 @@ router.get('/:id', checkAuthorization('admin'), async (req, res) => {
     }
 }); */
 
-router.get('/schedule', checkAuthorization('client', 'admin'), async (req, res) => {
+router.get('/', checkAuthorization('client', 'admin'), async (req, res) => {
     try {
         const result = await professorService.getSchedules();
         return res.status(200).send(result);
@@ -37,7 +37,7 @@ router.get('/schedule', checkAuthorization('client', 'admin'), async (req, res) 
     }
 });
 
-router.get('/schedule/:id', checkAuthorization('client', 'admin'), async (req, res) => {
+router.get('/:id', checkAuthorization('client', 'admin'), async (req, res) => {
     try {
         const result = await professorService.getSchedule(req.params.id);
         return res.status(200).send(result);
@@ -52,7 +52,7 @@ router.get('/schedule/:id', checkAuthorization('client', 'admin'), async (req, r
     }
 });
 
-router.post('/schedule', checkAuthorization('admin'), async (req, res) => {
+router.post('/', checkAuthorization('admin'), async (req, res) => {
     try {
         await professorService.addSchedule(req.body);
         return res.status(200).send({ added: true, msg: 'schedule added successfully' });
@@ -76,7 +76,7 @@ router.post('/schedule', checkAuthorization('admin'), async (req, res) => {
     }
 });
 
-router.delete('/schedule', checkAuthorization('admin'), async (req, res) => {
+router.delete('/', checkAuthorization('admin'), async (req, res) => {
     try {
         await professorService.removeSchedule(req.body);
         return res.status(200).send({ deleted: true, msg: 'schedule deleted successfully' });
