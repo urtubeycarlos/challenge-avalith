@@ -1,4 +1,6 @@
 const express = require('express');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 const userRouter = require('./routes/user');
 const routineRouter = require('./routes/routine');
 const equipmentRouter = require('./routes/gymEquipment');
@@ -12,6 +14,8 @@ require('dotenv').config();
 const app = express();
 
 app.use(express.json());
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(decodeToken);
 app.use('/user', userRouter);
