@@ -1,5 +1,8 @@
-function resolveError(req, res) {
+function resolveError(req, res, next) {
     const { error } = res.locals;
+    if (!error) {
+        return next();
+    }
     const result = {};
     result[error.action] = false; // false porque es una acción que no se pudo completar
     result.errorCode = error.code;
